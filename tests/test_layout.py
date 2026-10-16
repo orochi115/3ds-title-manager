@@ -137,6 +137,7 @@ class NameDbTests(unittest.TestCase):
         self.assertEqual(homebrew_name('0004000000384a00'), 'VirtuaNES')
         self.assertEqual(ique_dsiware_name('000480044b555743'), '照照瓦力欧制造')
         self.assertEqual(ique_dsiware_name('0004000000384a00'), '')
+        self._jpeg_becomes_48_rows()
         with tempfile.TemporaryDirectory() as temp:
             Path(temp, 'list_JP.json').write_text(
                 '[{"TitleID": "000480044B513945", "Name": "Example DSiWare"}]', encoding='utf-8')
@@ -149,6 +150,21 @@ class NameDbTests(unittest.TestCase):
             (meta / 'meta.json').write_text('{"name": "いつの間に交換日記"}', encoding='utf-8')
             self.assertEqual(ghostland_name(temp, '0004000000051600'), 'いつの間に交換日記')
         self.assertEqual(universal_name({'00306': 'CTR-AMKJ - Mario Kart 7'}, '0004000000030600'), 'Mario Kart 7')
+
+    def _jpeg_becomes_48_rows(self):
+        import tempfile
+        from pathlib import Path
+        from PIL import Image
+        from custominstall.titles import ghostland_icon_rows
+        image = Image.new('RGB', (48, 48), (255, 0, 0))
+        with tempfile.TemporaryDirectory() as temp:
+            icon = Path(temp) / 'db' / '3ds' / 'base' / '0004000000000001' / 'icon.jpg'
+            icon.parent.mkdir(parents=True)
+            image.save(icon, 'JPEG', quality=100)
+            rows = ghostland_icon_rows(temp, '0004000000000001')
+        self.assertEqual(len(rows), 48)
+        self.assertEqual(len(rows[0]), 48)
+        self.assertGreater(rows[0][0][0], 250)
 
 
 class RemoveFilesTests(unittest.TestCase):

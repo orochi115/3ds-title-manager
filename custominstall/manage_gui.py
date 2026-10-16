@@ -12,6 +12,7 @@ Both read the same Snapshot object.
 from __future__ import annotations
 
 import os
+import shutil
 from os.path import isfile
 import tkinter as tk
 import tkinter.filedialog as fd
@@ -25,6 +26,7 @@ from .snapshot import RemoveOptions, Snapshot
 from .titles import (
     KIND_BY_HIGH,
     TitleManager,
+    ghostland_icon_rows,
     ghostland_name,
     homebrew_name,
     ique_dsiware_name,
@@ -65,6 +67,15 @@ def seeddb_path() -> str:
     )
 
 
+def _byte_size(size: int) -> str:
+    value = float(size)
+    for unit in ('B', 'KB', 'MB', 'GB', 'TB'):
+        if value < 1024 or unit == 'TB':
+            return f'{value:.1f} {unit}' if unit != 'B' else f'{int(value)} B'
+        value /= 1024
+    return f'{size} B'
+
+
 def _rgb_photo(array) -> tk.PhotoImage:
     image = tk.PhotoImage(width=48, height=48)
     rows = []
@@ -84,6 +95,7 @@ class ManagerApp(ttk.Frame):
         self.view_folder = -1
         self.selected: tuple | None = None
         self.photos: dict[str, tk.PhotoImage] = {}
+        self.local_icons: set[str] = set()
         self.extdata_ids: dict[str, str] = {}
         self.cells: dict[int, tuple] = {}
         self.names_pending = False
@@ -116,6 +128,14 @@ class ManagerApp(ttk.Frame):
             ('Extdata', self.open_extdata),
         )):
             ttk.Button(buttons, text=text, command=command).grid(row=0, column=col, padx=2, pady=2)
+
+        capacity = ttk.Frame(self)
+        capacity.pack(fill=tk.X, padx=6)
+        self.capacity = ttk.Progressbar(capacity, maximum=100)
+        self.capacity.pack(side=tk.LEFT, fill=tk.X, expand=True, pady=2)
+        self.capacity_label = ttk.Label(capacity, text='')
+        self.capacity_label.pack(side=tk.LEFT, padx=8)
+        self._update_capacity()
 
         body = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
         body.pack(fill=tk.BOTH, expand=True, padx=6, pady=4)
@@ -192,6 +212,19 @@ class ManagerApp(ttk.Frame):
     def _paths(self) -> dict[str, str]:
         return {key: var.get().strip() for key, var in self.path_vars.items()}
 
+    def _update_capacity(self) -> None:
+        sd = self._paths().get('SD root', '')
+        try:
+            usage = shutil.disk_usage(sd)
+        except OSError:
+            self.capacity.configure(value=0)
+            self.capacity_label.configure(text='SD capacity unavailable')
+            return
+        used = usage.total - usage.free
+        percent = 0 if usage.total == 0 else used * 100 / usage.total
+        self.capacity.configure(value=percent)
+        self.capacity_label.configure(text=f'SD {_byte_size(used)} / {_byte_size(usage.total)} ({percent:.0f}%)')
+
     def refresh(self) -> None:
         if self.dirty and not mb.askyesno('Refresh', 'Discard unsaved layout changes and read the snapshot again?'):
             return
@@ -220,6 +253,7 @@ class ManagerApp(ttk.Frame):
         self.snap = snap
         self.dirty = False
         self.photos.clear()
+        self.local_icons.clear()
         self.extdata_ids.clear()
         self.view_folder = -1
         self._fill_names_from_db()
@@ -228,6 +262,7 @@ class ManagerApp(ttk.Frame):
         limit = ''
         if len(apps) > 300:
             limit = ' More than 300 application icons.'
+        self._update_capacity()
         self._set_status(f'{len(rows)} titles, {len(apps)} applications.{limit} Loading names and icons.')
         self.names_pending = True
         sd = self._paths()['SD root']
@@ -245,6 +280,8 @@ class ManagerApp(ttk.Frame):
                 if generation != self.generation:
                     return
                 name, icon, extdata_id = manager.read_display(title_id)
+                if title_id in self.local_icons:
+                    icon = None
                 self.after(0, lambda tid=title_id, name=name, icon=icon, extdata_id=extdata_id:
                            self._apply_meta(generation, tid, name, icon, extdata_id))
             self.after(0, lambda: self._names_finished(generation, ''))
@@ -299,16 +336,19 @@ class ManagerApp(ttk.Frame):
         pending = [row.title_id for row in self.snap.list_titles(read_names=False)]
         pending.extend(format_title_id(entry.title_id) for entry in self.snap.launcher.entries())
         for title_id in pending:
-            if self.snap._names.get(title_id):
-                continue
-            self.snap._names[title_id] = (
-                ghostland_name(ghost, title_id)
-                or known.get(title_id)
-                or universal_name(universal, title_id)
-                or homebrew_name(title_id)
-                or ique_dsiware_name(title_id)
-                or system_title_name(title_id)
-            )
+            if not self.snap._names.get(title_id):
+                self.snap._names[title_id] = (
+                    ghostland_name(ghost, title_id)
+                    or known.get(title_id)
+                    or universal_name(universal, title_id)
+                    or homebrew_name(title_id)
+                    or ique_dsiware_name(title_id)
+                    or system_title_name(title_id)
+                )
+            icon = ghostland_icon_rows(ghost, title_id)
+            if icon is not None:
+                self.photos[title_id] = _rgb_photo(icon)
+                self.local_icons.add(title_id)
 
     def _all_rows(self) -> list[tuple]:
         """Every SD title, NAND title, and folder from the open snapshot."""
@@ -413,7 +453,7 @@ class ManagerApp(ttk.Frame):
             self.slot_rects[slot] = self.canvas.create_rectangle(x, y, x + 60, y + 60, fill=fill, outline='#0d1b2a')
             if kind is None:
                 continue
-            if kind[0] in ('app', 'sd') and kind[1] in self.photos:
+            if kind[0] in ('app', 'sd', 'system') and kind[1] in self.photos:
                 self.canvas.create_image(x + 30, y + 26, image=self.photos[kind[1]])
             elif kind[0] == 'folder':
                 self.canvas.create_rectangle(x + 10, y + 16, x + 50, y + 48, fill='#e9c46a', outline='')
@@ -583,7 +623,7 @@ class ManagerApp(ttk.Frame):
         cell = self.cells[slot]
         x = self.canvas.canvasx(self._press_xy[0])
         y = self.canvas.canvasy(self._press_xy[1])
-        if cell[0] in ('app', 'sd') and cell[1] in self.photos:
+        if cell[0] in ('app', 'sd', 'system') and cell[1] in self.photos:
             return self.canvas.create_image(x, y, image=self.photos[cell[1]])
         return self.canvas.create_text(x, y, text=(cell[2] or cell[0])[:12], fill='#f4a261')
 
@@ -1006,6 +1046,7 @@ class ManagerApp(ttk.Frame):
     def _added(self, installed: list[str]) -> None:
         self.dirty = True
         self._draw()
+        self._update_capacity()
         self._set_status(f'Installed {", ".join(installed)}. Save snapshot, then import before HOME Menu.')
 
     def dump_cia(self) -> None:
@@ -1116,6 +1157,7 @@ class ManagerApp(ttk.Frame):
         self.selected = None
         self.photos.pop(title_id, None)
         self._draw()
+        self._update_capacity()
         self._set_status(f'Removed {title_id}. Backup: {backup}. Save snapshot, then import before HOME Menu.')
 
     def open_extdata(self) -> None:

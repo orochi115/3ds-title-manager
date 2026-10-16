@@ -200,6 +200,35 @@ def system_title_name(title_id: str) -> str:
     return _SYSTEM_BY_LOW.get(text[8:], '')
 
 
+def ghostland_icon_rows(root: str, title_id: str):
+    """48x48 RGB rows from a ghost-land ``icon.jpg``, or None when it is missing."""
+    if not root:
+        return None
+    base = Path(root) / 'db' / '3ds'
+    folder = title_id.upper()
+    path = next(
+        (base / category / folder / 'icon.jpg' for category in
+         ('base', 'dlc', 'dsiware', 'updates', 'videos', 'virtual-console')
+         if (base / category / folder / 'icon.jpg').is_file()),
+        None,
+    )
+    if path is None:
+        return None
+    try:
+        from PIL import Image
+    except ImportError:
+        return None
+    try:
+        image = Image.open(path).convert('RGB')
+    except OSError:
+        return None
+    if image.size != (48, 48):
+        image = image.resize((48, 48))
+    raw = image.tobytes()
+    pixels = [tuple(raw[index:index + 3]) for index in range(0, len(raw), 3)]
+    return [pixels[start:start + 48] for start in range(0, 48 * 48, 48)]
+
+
 def ghostland_name(root: str, title_id: str) -> str:
     """Name from a ghost-land 3DS-dB checkout. The title id is the folder name."""
     base = Path(root) / 'db' / '3ds'

@@ -26,6 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "pyctr>=0.7.6,<0.9",
+    "pillow>=9",
     "py7zr>=0.20",
     "pyzipper>=0.3.6",
     "rarfile>=4.1",
