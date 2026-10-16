@@ -7,3 +7,6 @@
 [submodule "third_party/universal-db"]
 	path = third_party/universal-db
 	url = https://github.com/Universal-Team/db.git
+[submodule "third_party/3DS-rom-tools"]
+	path = third_party/3DS-rom-tools
+	url = https://github.com/ihaveamac/3DS-rom-tools.git

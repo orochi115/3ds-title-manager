@@ -46,6 +46,23 @@ def _existing_dir(*candidates: str | None) -> str:
     return ''
 
 
+def _existing_file(*candidates: str | None) -> str:
+    for candidate in candidates:
+        if candidate and os.path.isfile(candidate):
+            return candidate
+    return ''
+
+
+def seeddb_path() -> str:
+    """seeddb shipped with the 3DS-rom-tools submodule, if that checkout exists."""
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    return _existing_file(
+        os.path.join(root, 'third_party', '3DS-rom-tools', 'seeddb', 'seeddb.bin'),
+        os.environ.get('CUSTOMINSTALL_SEEDDB'),
+        os.environ.get('SEEDDB_PATH'),
+    )
+
+
 def _rgb_photo(array) -> tk.PhotoImage:
     image = tk.PhotoImage(width=48, height=48)
     rows = []
@@ -76,9 +93,6 @@ class ManagerApp(ttk.Frame):
         defaults = {
             'Snapshot': _env('CUSTOMINSTALL_SNAPSHOT'),
             'SD root': _env('CUSTOMINSTALL_SD'),
-            'boot9': _env('CUSTOMINSTALL_BOOT9'),
-            'movable.sed': _env('CUSTOMINSTALL_MOVABLE'),
-            'seeddb': _env('CUSTOMINSTALL_SEEDDB') or _env('SEEDDB_PATH'),
         }
         for row, (label, value) in enumerate(defaults.items()):
             ttk.Label(paths, text=label, width=12).grid(row=row, column=0, sticky=tk.W)
@@ -187,7 +201,7 @@ class ManagerApp(ttk.Frame):
 
         def work():
             try:
-                snap = Snapshot(paths['Snapshot'], sd=paths['SD root'] or None, seeddb=paths['seeddb'] or None)
+                snap = Snapshot(paths['Snapshot'], sd=paths['SD root'] or None, seeddb=seeddb_path() or None)
                 rows = snap.list_titles(read_names=False)
             except Exception as exc:
                 self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
@@ -212,11 +226,14 @@ class ManagerApp(ttk.Frame):
             limit = ' More than 300 application icons.'
         self._set_status(f'{len(rows)} titles, {len(apps)} applications.{limit} Loading names and icons.')
         self.names_pending = True
-        paths = self._paths()
+        sd = self._paths()['SD root']
 
         def names():
+            if not sd:
+                self.after(0, lambda: self._names_finished(generation, ''))
+                return
             try:
-                manager = TitleManager(paths['SD root'], paths['movable.sed'], paths['boot9'], paths['seeddb'] or None)
+                manager = TitleManager(sd, str(self.snap.movable), str(self.snap.boot9), seeddb_path() or None)
             except Exception as exc:
                 self.after(0, lambda: self._names_finished(generation, str(exc)))
                 return
@@ -912,7 +929,7 @@ class ManagerApp(ttk.Frame):
             return
         if not mb.askyesno('Add CIA', 'Install onto the SD card now and record tickets in the snapshot?'):
             return
-        seeddb = self._paths()['seeddb'] or None
+        seeddb = seeddb_path() or None
 
         def work():
             try:
@@ -937,12 +954,11 @@ class ManagerApp(ttk.Frame):
         if title_id[:8] in ('0004000e', '0004008c'):
             self._confirm_addon(title_id)
             return
-        paths = self._paths()
         self._set_status('Looking up the save, extdata, update, and DLC...')
 
         def work():
             try:
-                info = _delete_info(self.snap, title_id, paths)
+                info = _delete_info(self.snap, title_id)
             except Exception as exc:
                 self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
                 return
@@ -1026,10 +1042,12 @@ class ManagerApp(ttk.Frame):
         self.status.configure(text=text)
 
 
-def _delete_info(snap: Snapshot, title_id: str, paths: dict) -> dict:
+def _delete_info(snap: Snapshot, title_id: str) -> dict:
     update_id = snap.sibling_id(title_id, '0004000e')
     dlc_id = snap.sibling_id(title_id, '0004008c')
-    manager = TitleManager(paths['SD root'], paths['movable.sed'], paths['boot9'], paths['seeddb'] or None)
+    if not snap.sd:
+        raise LayoutError('SD root is required')
+    manager = TitleManager(snap.sd, str(snap.movable), str(snap.boot9), seeddb_path() or None)
     id1 = manager.id1_root()
 
     def installed(tid: str) -> str:
