@@ -31,7 +31,8 @@ else
 end
 
 @Menu
-labelsel -o -s "ci-manage" Menu_*
+set ERRORMSG "ci-manage cancelled"
+labelsel -s "ci-manage" Menu_*
 goto Menu
 
 @Menu_Export
@@ -42,10 +43,24 @@ mkdir $[OUT]/nand
 mkdir $[OUT]/sd
 mkdir $[OUT]/plain
 echo "Exporting to\n$[OUT]"
+set ERRORMSG "movable.sed copy failed"
 cp -w 1:/private/movable.sed $[OUT]/nand/movable.sed
-cp -w S:/boot9.bin $[OUT]/nand/boot9.bin
+set ERRORMSG "boot9.bin copy failed"
+cp -w M:/boot9.bin $[OUT]/nand/boot9.bin
+set ERRORMSG "otp copy failed"
+if find M:/otp.bin OTPSRC
+	cp -w $[OTPSRC] $[OUT]/nand/otp.bin
+elif find M:/otp.mem OTPSRC
+	cp -w $[OTPSRC] $[OUT]/nand/otp.bin
+else
+	echo "otp.bin and otp.mem were not found on M:."
+	ask "Abort?"
+end
+set ERRORMSG "ticket.db copy failed"
 cp -w 1:/dbs/ticket.db $[OUT]/nand/ticket.db
+set ERRORMSG "HOME Menu save copy failed"
 cp -w 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000 $[OUT]/nand/homemenu-save.bin
+set ERRORMSG "seed save copy failed"
 cp -w 1:/data/$[SYSID0]/sysdata/0001000f/00000000 $[OUT]/nand/seed-save.bin
 imgmount -s -o $[OUT]/nand/homemenu-save.bin
 cp -s -o G:/Launcher.dat $[OUT]/plain/Launcher.dat
@@ -53,14 +68,18 @@ imgumount -s -o
 imgmount -s -o $[OUT]/nand/seed-save.bin
 cp -s -o G:/SEEDDB $[OUT]/plain/SEEDDB
 imgumount -s -o
-find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/title.db TITLEDB
-cp -w $[TITLEDB] $[OUT]/sd/title.db
-find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/import.db IMPORTDB
-cp -w $[IMPORTDB] $[OUT]/sd/import.db
-find 0:/Nintendo 3DS/$[SYSID0]/*/extdata/00000000/$[EXTID] EXTDIR
-cp $[EXTDIR] $[OUT]/sd/homemenu-extdata
+set ERRORMSG "SD id1 directory was not found"
+find "0:/Nintendo 3DS/$[SYSID0]/*" ID1DIR
+set ERRORMSG "title.db copy failed"
+cp -w "$[ID1DIR]/dbs/title.db" $[OUT]/sd/title.db
+set ERRORMSG "import.db copy failed"
+cp -w "$[ID1DIR]/dbs/import.db" $[OUT]/sd/import.db
+set ERRORMSG "HOME Menu extdata copy failed"
+cp "$[ID1DIR]/extdata/00000000/$[EXTID]" $[OUT]/sd/homemenu-extdata
 echo "Exported.\nPower off from GodMode9.\n\n$[OUT]"
 goto Menu
+
+@Menu_Back
 
 @Menu_Import
 dirsel "Select one ci-manage export folder" 0:/gm9/out/ci-manage SNAP
@@ -75,20 +94,48 @@ echo "Backing up the live files"
 cp -w 1:/dbs/ticket.db $[BAK]/nand/ticket.db
 cp -w 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000 $[BAK]/nand/homemenu-save.bin
 cp -w 1:/data/$[SYSID0]/sysdata/0001000f/00000000 $[BAK]/nand/seed-save.bin
-find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/title.db TITLEDB
-cp -w $[TITLEDB] $[BAK]/sd/title.db
-find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/import.db IMPORTDB
-cp -w $[IMPORTDB] $[BAK]/sd/import.db
-find 0:/Nintendo 3DS/$[SYSID0]/*/extdata/00000000/$[EXTID] EXTDIR
-cp $[EXTDIR] $[BAK]/sd/homemenu-extdata
+find "0:/Nintendo 3DS/$[SYSID0]/*" ID1DIR
+cp -w "$[ID1DIR]/dbs/title.db" $[BAK]/sd/title.db
+cp -w "$[ID1DIR]/dbs/import.db" $[BAK]/sd/import.db
+cp "$[ID1DIR]/extdata/00000000/$[EXTID]" $[BAK]/sd/homemenu-extdata
 allow -a 1:/
 echo "Writing the snapshot"
-cp -w -n $[SNAP]/nand/ticket.db 1:/dbs/ticket.db
-cp -w -n $[SNAP]/nand/homemenu-save.bin 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000
-cp -w -n $[SNAP]/nand/seed-save.bin 1:/data/$[SYSID0]/sysdata/0001000f/00000000
-cp -w -n $[SNAP]/sd/title.db $[TITLEDB]
-cp -w -n $[SNAP]/sd/import.db $[IMPORTDB]
+cp -w -n $[SNAP]/sd/title.db "$[ID1DIR]/dbs/title.db"
+cp -w -n $[SNAP]/sd/import.db "$[ID1DIR]/dbs/import.db"
+if find "$[SNAP]/nand/Launcher.dat" LAUNCHER
+	imgmount "1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000"
+	cp -w -n $[LAUNCHER] G:/Launcher.dat
+	imgumount
+else
+	cp -w -n $[SNAP]/nand/homemenu-save.bin "1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000"
+end
+if find "$[SNAP]/nand/SEEDDB" SEEDDB
+	imgmount "1:/data/$[SYSID0]/sysdata/0001000f/00000000"
+	cp -w -n $[SEEDDB] G:/SEEDDB
+	imgumount
+else
+	cp -w -n $[SNAP]/nand/seed-save.bin "1:/data/$[SYSID0]/sysdata/0001000f/00000000"
+end
+if find "$[SNAP]/nand/tickets/*" TICKETFOUND
+	imgmount 1:/dbs/ticket.db
+	for "$[SNAP]/nand/tickets/*" TICKET
+		strsplit TICKETNAME $[TICKET] "/"
+		cp -w -n $[TICKET] "G:/$[TICKETNAME]"
+	next
+	imgumount
+else
+	cp -w -n $[SNAP]/nand/ticket.db 1:/dbs/ticket.db
+end
+if find "$[SNAP]/nand/tickets-remove/*" REMOVED
+	imgmount 1:/dbs/ticket.db
+	for "$[SNAP]/nand/tickets-remove/*" TICKET
+		strsplit TICKETNAME $[TICKET] "/"
+		rm "G:/$[TICKETNAME]"
+	next
+	imgumount
+end
 set TMP $[GM9OUT]/ci-manage/tmp-extdata-$[TIMESTAMP]
+set EXTDIR "$[ID1DIR]/extdata/00000000/$[EXTID]"
 cp -w -n $[SNAP]/sd/homemenu-extdata $[TMP]
 rm $[EXTDIR]
 mv $[TMP] $[EXTDIR]

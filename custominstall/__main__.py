@@ -701,6 +701,10 @@ class CustomInstall:
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == 'titles':
+        from .titles import main as titles_main
+        raise SystemExit(titles_main(sys.argv[2:]))
+
     parser = ArgumentParser(description='Install a CIA to the SD card for a Nintendo 3DS system.')
     parser.add_argument('cia', help='CIA files', nargs='+')
     parser.add_argument('-m', '--movable', help='movable.sed file', required=True)

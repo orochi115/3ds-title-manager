@@ -27,6 +27,8 @@ from pyctr.type.tmd import TitleMetadataError
 
 from . import __version__
 from .__main__ import CustomInstall, load_cifinish, InvalidCIFinishError, InstallStatus, save3ds_fuse_path
+from .layout import LauncherData, LayoutError
+from .titles import TitleManager
 
 if TYPE_CHECKING:
     from os import PathLike
@@ -47,8 +49,11 @@ if is_windows:
         tbl = cc.GetModule('TaskbarLib.tlb')
 
         taskbar = cc.CreateObject('{56FDF344-FD6D-11D0-958A-006097C9A090}', interface=tbl.ITaskbarList3)
-        taskbar.HrInit()
-    except (ModuleNotFoundError, UnicodeEncodeError, AttributeError):
+        try:
+            taskbar.HrInit()
+        except Exception:
+            taskbar = None
+    except (ModuleNotFoundError, UnicodeEncodeError, AttributeError, OSError):
         pass
 
 file_parent = dirname(abspath(__file__))
@@ -76,10 +81,24 @@ def find_first_file(paths):
             return p
 
 
+# Optional test overrides from the launcher outside this repo.
+# CUSTOMINSTALL_BOOT9, CUSTOMINSTALL_SEEDDB (or SEEDDB_PATH),
+# CUSTOMINSTALL_MOVABLE, CUSTOMINSTALL_SD, CUSTOMINSTALL_SNAPSHOT.
+_env_boot9 = environ.get('CUSTOMINSTALL_BOOT9')
+if _env_boot9:
+    b9_paths.insert(0, _env_boot9)
+_env_seeddb = environ.get('CUSTOMINSTALL_SEEDDB')
+if _env_seeddb:
+    seeddb_paths.insert(0, _env_seeddb)
+
 # find boot9, seeddb, and movable.sed to auto-select in the gui
 default_b9_path = find_first_file(b9_paths)
 default_seeddb_path = find_first_file(seeddb_paths)
-default_movable_sed_path = find_first_file([join(file_parent, 'movable.sed')])
+default_movable_sed_path = find_first_file(
+    [p for p in (environ.get('CUSTOMINSTALL_MOVABLE'), join(file_parent, 'movable.sed')) if p]
+)
+default_sd_path = environ.get('CUSTOMINSTALL_SD') or ''
+default_snapshot_path = environ.get('CUSTOMINSTALL_SNAPSHOT') or ''
 
 if default_seeddb_path:
     load_seeddb(default_seeddb_path)
@@ -333,6 +352,8 @@ class CustomInstallGUI(ttk.Frame):
 
         sd_selected = tk.Text(file_pickers, wrap='none', height=1)
         sd_selected.grid(row=0, column=1, sticky=tk.EW)
+        if default_sd_path:
+            sd_selected.insert(tk.END, default_sd_path)
 
         sd_button = ttk.Button(file_pickers, text='...', command=sd_callback)
         sd_button.grid(row=0, column=2)
@@ -501,6 +522,9 @@ class CustomInstallGUI(ttk.Frame):
         start = ttk.Button(control_frame, text='Start install', command=self.start_install)
         start.grid(row=0, column=3)
 
+        installed = ttk.Button(control_frame, text='Installed titles', command=self.open_installed)
+        installed.grid(row=0, column=4)
+
         self.status_label = ttk.Label(self, text='Waiting...')
         self.status_label.grid(row=5, column=0, sticky=tk.NSEW)
 
@@ -519,6 +543,9 @@ class CustomInstallGUI(ttk.Frame):
         self.enable_buttons()
         if not self.b9_loaded:
             self.log('Note: boot9 was not auto-detected. Please choose it before adding any titles.')
+
+    def open_installed(self):
+        InstalledTitlesWindow(self.parent, self)
 
     def sort_treeview(self):
         l = [(self.treeview.set(k, 'titlename'), k) for k in self.treeview.get_children()]
@@ -742,6 +769,367 @@ class CustomInstallGUI(ttk.Frame):
                 self.enable_buttons()
 
         Thread(target=install).start()
+
+
+class InstalledTitlesWindow(tk.Toplevel):
+    """List SD titles and edit Home Menu slots. Writes go through TitleManager, which backs up extdata first."""
+
+    def __init__(self, parent: tk.Tk, installer: CustomInstallGUI):
+        super().__init__(parent)
+        self.installer = installer
+        self.rows = []
+        self.wm_title('Installed titles')
+        self.geometry('860x520')
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(2, weight=1)
+
+        paths = ttk.Frame(self)
+        paths.grid(row=0, column=0, sticky=tk.EW, padx=6, pady=4)
+        paths.columnconfigure(1, weight=1)
+        self.snapshot_box = tk.Text(paths, height=1, wrap='none')
+        ttk.Label(paths, text='Snapshot').grid(row=0, column=0, sticky=tk.W)
+        self.snapshot_box.grid(row=0, column=1, sticky=tk.EW)
+        self.snapshot_box.insert(tk.END, default_snapshot_path)
+        self.sd_box = tk.Text(paths, height=1, wrap='none')
+        ttk.Label(paths, text='SD root').grid(row=1, column=0, sticky=tk.W)
+        self.sd_box.grid(row=1, column=1, sticky=tk.EW)
+        self.sd_box.insert(tk.END, default_sd_path)
+        self.launcher_box = tk.Text(paths, height=1, wrap='none')
+        ttk.Label(paths, text='Launcher.dat (optional)').grid(row=2, column=0, sticky=tk.W)
+        self.launcher_box.grid(row=2, column=1, sticky=tk.EW)
+
+        def pick_launcher():
+            chosen = fd.askopenfilename(parent=self, title='Select Launcher.dat')
+            if chosen:
+                self.launcher_box.delete('1.0', tk.END)
+                self.launcher_box.insert(tk.END, chosen)
+
+        ttk.Button(paths, text='...', command=pick_launcher).grid(row=2, column=2)
+
+        buttons = ttk.Frame(self)
+        buttons.grid(row=1, column=0, sticky=tk.EW, padx=6)
+        ttk.Button(buttons, text='Refresh', command=self.refresh).grid(row=0, column=0, padx=2)
+        ttk.Button(buttons, text='Sort by name', command=lambda: self.sort_by('name')).grid(row=0, column=1, padx=2)
+        ttk.Button(buttons, text='Sort by ID', command=lambda: self.sort_by('id')).grid(row=0, column=2, padx=2)
+        ttk.Label(buttons, text='Slot').grid(row=0, column=3, padx=(12, 2))
+        self.slot_var = tk.StringVar(value='0')
+        ttk.Entry(buttons, textvariable=self.slot_var, width=6).grid(row=0, column=4)
+        ttk.Label(buttons, text='Folder').grid(row=0, column=5, padx=(8, 2))
+        self.folder_var = tk.StringVar(value='-1')
+        ttk.Entry(buttons, textvariable=self.folder_var, width=6).grid(row=0, column=6)
+        ttk.Button(buttons, text='Apply to selected', command=self.apply_selected).grid(row=0, column=7, padx=6)
+        ttk.Label(buttons, text='Folder name').grid(row=0, column=8, padx=(8, 2))
+        self.folder_name = tk.StringVar()
+        ttk.Entry(buttons, textvariable=self.folder_name, width=16).grid(row=0, column=9)
+        ttk.Button(buttons, text='Create folder', command=self.create_folder).grid(row=0, column=10, padx=2)
+        ttk.Button(buttons, text='Rename folder', command=self.rename_folder).grid(row=0, column=11, padx=2)
+        ttk.Button(buttons, text='Save snapshot', command=self.save_snapshot).grid(row=0, column=12, padx=8)
+        ttk.Button(buttons, text='Add CIA', command=self.add_cia).grid(row=1, column=0, padx=2, pady=4)
+        ttk.Button(buttons, text='Remove selected', command=self.remove_selected).grid(row=1, column=1, padx=2, pady=4)
+
+        tree_frame = ttk.Frame(self)
+        tree_frame.grid(row=2, column=0, sticky=tk.NSEW, padx=6, pady=4)
+        tree_frame.rowconfigure(0, weight=1)
+        tree_frame.columnconfigure(0, weight=1)
+        scroll = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL)
+        scroll.grid(row=0, column=1, sticky=tk.NS)
+        self.tree = ttk.Treeview(tree_frame, columns=('tid', 'kind', 'slot', 'folder', 'name'), show='headings',
+                                 yscrollcommand=scroll.set)
+        self.tree.grid(row=0, column=0, sticky=tk.NSEW)
+        scroll.configure(command=self.tree.yview)
+        for key, label, width in (
+            ('tid', 'Title ID', 140),
+            ('kind', 'Type', 70),
+            ('slot', 'Slot', 50),
+            ('folder', 'Folder', 60),
+            ('name', 'Name', 360),
+        ):
+            self.tree.heading(key, text=label)
+            self.tree.column(key, width=width, anchor=tk.W)
+        self.tree.bind('<<TreeviewSelect>>', self._on_select)
+
+        self.status = ttk.Label(self, text='Uses the SD, boot9, movable.sed, and seeddb paths from the main window.')
+        self.status.grid(row=3, column=0, sticky=tk.EW, padx=6, pady=4)
+
+    def _paths(self):
+        def text_of(key):
+            box = self.installer.file_picker_textboxes.get(key)
+            return box.get('1.0', tk.END).strip() if box is not None else ''
+
+        sd = text_of('sd')
+        movable = text_of('movable.sed')
+        boot9 = text_of('boot9')
+        seeddb = text_of('seeddb')
+        if not sd or not movable or not boot9:
+            raise LayoutError('Choose SD root, boot9, and movable.sed in the main window first.')
+        return sd, movable, boot9, seeddb or None
+
+    def _snapshot_path(self):
+        return self.snapshot_box.get('1.0', tk.END).strip()
+
+    def _snapshot(self):
+        from .snapshot import Snapshot
+        path = self._snapshot_path()
+        if not path:
+            raise LayoutError('Choose a ci-manage export folder.')
+        sd = self.sd_box.get('1.0', tk.END).strip() or None
+        return Snapshot(path, sd=sd)
+
+    def _manager(self):
+        if self._snapshot_path():
+            return self._snapshot()
+        sd, movable, boot9, seeddb = self._paths()
+        return TitleManager(sd, movable, boot9, seeddb)
+
+    def refresh(self):
+        self.status.configure(text='Reading titles...')
+        self.update_idletasks()
+
+        def work():
+            try:
+                manager = self._manager()
+                if hasattr(manager, 'list_titles'):
+                    rows = [row.as_installed() for row in manager.list_titles(read_names=True)]
+                    self.snap = manager
+                else:
+                    rows, _savedata = manager.list_with_layout(read_names=True)
+                    self.snap = None
+                error = None
+            except Exception as exc:
+                rows = []
+                error = exc
+                self.snap = None
+            self.after(0, lambda: self._show_rows(rows, error))
+
+        Thread(target=work, daemon=True).start()
+
+    def _show_rows(self, rows, error):
+        self.tree.delete(*self.tree.get_children())
+        self.rows = rows
+        if error is not None:
+            self.status.configure(text=f'{type(error).__name__}: {error}')
+            return
+        apps = 0
+        for row in rows:
+            if row.kind == 'app':
+                apps += 1
+            slot = '' if row.slot is None else str(row.slot)
+            folder = '' if row.folder is None else str(row.folder)
+            self.tree.insert('', tk.END, iid=row.title_id, values=(row.title_id, row.kind, slot, folder, row.name))
+        note = ''
+        if apps >= 300:
+            note = ' HOME Menu shows at most 300 application icons.'
+        self.status.configure(text=f'{len(rows)} titles, {apps} applications.{note}')
+
+    def _on_select(self, _event):
+        selected = self.tree.selection()
+        if not selected:
+            return
+        values = self.tree.item(selected[0], 'values')
+        if values[2] != '':
+            self.slot_var.set(values[2])
+        if values[3] != '':
+            self.folder_var.set(values[3])
+
+    def _selected_id(self):
+        selected = self.tree.selection()
+        if not selected:
+            raise LayoutError('Select a title first.')
+        return selected[0]
+
+    def apply_selected(self):
+        try:
+            title_id = self._selected_id()
+            slot = int(self.slot_var.get())
+            folder = int(self.folder_var.get())
+        except LayoutError as exc:
+            self.status.configure(text=str(exc))
+            return
+        except ValueError:
+            self.status.configure(text='Slot and folder must be integers.')
+            return
+        if not mb.askyesno('Write SaveData.dat', f'Move {title_id} to slot {slot}, folder {folder}?\n'
+                                                 'The extdata directory is copied to custom-install-backup first.'):
+            return
+        self.status.configure(text='Writing SaveData.dat...')
+        self.update_idletasks()
+
+        def work():
+            try:
+                manager = self.snap or self._manager()
+                if hasattr(manager, 'save'):
+                    manager.move(title_id, slot, folder)
+                    self.snap = manager
+                    message = 'Moved in memory. Press Save snapshot before importing.'
+                else:
+                    backup = manager.move(title_id, slot, folder)
+                    message = f'Wrote layout. Backup: {backup}'
+            except Exception as exc:
+                message = f'{type(exc).__name__}: {exc}'
+            self.after(0, lambda: self._after_write(message))
+
+        Thread(target=work, daemon=True).start()
+
+    def sort_by(self, key: str):
+        if not mb.askyesno('Sort icons', f'Sort application icons by {key} inside each folder?\n'
+                                         'The extdata directory is copied to custom-install-backup first.'):
+            return
+        self.status.configure(text=f'Sorting by {key}...')
+        self.update_idletasks()
+
+        def work():
+            try:
+                manager = self.snap or self._manager()
+                if hasattr(manager, 'save'):
+                    manager.sort_apps(key)
+                    self.snap = manager
+                    message = f'Sorted by {key} in memory. Press Save snapshot before importing.'
+                else:
+                    backup = manager.sort_apps(key)
+                    message = f'Sorted by {key}. Backup: {backup}'
+            except Exception as exc:
+                message = f'{type(exc).__name__}: {exc}'
+            self.after(0, lambda: self._after_write(message))
+
+        Thread(target=work, daemon=True).start()
+
+    def _after_write(self, message: str):
+        self.status.configure(text=message)
+        if message.startswith('Wrote layout') or message.startswith('Saved'):
+            self.refresh()
+
+    def _launcher(self):
+        path = self.launcher_box.get('1.0', tk.END).strip()
+        if not path:
+            raise LayoutError('Choose a Launcher.dat dump first. Folder names are not stored on the SD card.')
+        return path
+
+    def add_cia(self):
+        paths = fd.askopenfilenames(parent=self, title='Select CIA files', filetypes=[('CIA', '*.cia'), ('All', '*.*')])
+        if not paths:
+            return
+        snap = getattr(self, 'snap', None) or None
+        if snap is None:
+            self.status.configure(text='Refresh the snapshot first.')
+            return
+        if not mb.askyesno('Add CIA', 'Install onto the SD card and record tickets in the snapshot?'):
+            return
+
+        def work():
+            try:
+                installed = snap.add_cias(list(paths))
+                self.snap = snap
+                message = f'Installed {len(installed)}. Press Save snapshot, then import from GodMode9.'
+            except Exception as exc:
+                message = f'{type(exc).__name__}: {exc}'
+            self.after(0, lambda: self.status.configure(text=message))
+
+        Thread(target=work, daemon=True).start()
+
+    def remove_selected(self):
+        try:
+            title_id = self._selected_id()
+        except LayoutError as exc:
+            self.status.configure(text=str(exc))
+            return
+        snap = getattr(self, 'snap', None)
+        if snap is None:
+            self.status.configure(text='Refresh the snapshot first.')
+            return
+        if not mb.askyesno('Remove title', f'Remove {title_id} from the SD card and the snapshot?\n'
+                                            'The save-data directory is left in place.'):
+            return
+
+        def work():
+            try:
+                snap.remove(title_id)
+                self.snap = snap
+                message = f'Removed {title_id}. Press Save snapshot, then import from GodMode9.'
+            except Exception as exc:
+                message = f'{type(exc).__name__}: {exc}'
+            self.after(0, lambda: self.status.configure(text=message))
+
+        Thread(target=work, daemon=True).start()
+
+    def save_snapshot(self):
+        snap = getattr(self, 'snap', None)
+        if snap is None:
+            self.status.configure(text='Refresh the snapshot first.')
+            return
+        if not mb.askyesno('Save snapshot', 'Write SaveData.dat, Launcher.dat, and SEEDDB into the export folder?\n'
+                                            'Import it from GodMode9 before opening HOME Menu.'):
+            return
+
+        def work():
+            try:
+                backup = snap.save()
+                message = f'Saved. Backup: {backup}'
+            except Exception as exc:
+                message = f'{type(exc).__name__}: {exc}'
+            self.after(0, lambda: self.status.configure(text=message))
+
+        Thread(target=work, daemon=True).start()
+
+    def create_folder(self):
+        if self._snapshot_path():
+            self._edit_snapshot_folder('create')
+            return
+        self._edit_launcher('create')
+
+    def rename_folder(self):
+        if self._snapshot_path():
+            self._edit_snapshot_folder('rename')
+            return
+        self._edit_launcher('rename')
+
+    def _edit_snapshot_folder(self, action: str):
+        try:
+            snap = self.snap or self._snapshot()
+            self.snap = snap
+            name = self.folder_name.get()
+            if not name:
+                raise LayoutError('Enter a folder name.')
+            if action == 'create':
+                slot_text = self.slot_var.get().strip()
+                slot = int(slot_text) if slot_text else None
+                created = snap.create_folder(name, slot)
+                detail = f'Created folder {created.index}. Press Save snapshot.'
+            else:
+                index = int(self.folder_var.get())
+                snap.rename_folder(index, name)
+                detail = f'Renamed folder {index}. Press Save snapshot.'
+        except (LayoutError, OSError, ValueError) as exc:
+            self.status.configure(text=str(exc))
+            return
+        self.status.configure(text=detail)
+
+    def _edit_launcher(self, action: str):
+        try:
+            path = self._launcher()
+            name = self.folder_name.get()
+            if not name:
+                raise LayoutError('Enter a folder name.')
+            launcher = LauncherData(open(path, 'rb').read())
+            if action == 'create':
+                slot_text = self.slot_var.get().strip()
+                slot = int(slot_text) if slot_text else None
+                created = launcher.create_folder(name, slot)
+                detail = f'Created folder {created.index} at slot {created.position}.'
+            else:
+                index = int(self.folder_var.get())
+                launcher.rename_folder(index, name)
+                detail = f'Renamed folder {index}.'
+        except (LayoutError, OSError, ValueError) as exc:
+            self.status.configure(text=str(exc))
+            return
+        dest = path + '.out'
+        try:
+            with open(dest, 'wb') as handle:
+                handle.write(launcher.blob)
+        except OSError as exc:
+            self.status.configure(text=str(exc))
+            return
+        self.status.configure(text=f'{detail} Wrote {dest}. Copy it back to NAND Launcher.dat yourself.')
 
 
 def main():
