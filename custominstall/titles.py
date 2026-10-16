@@ -128,11 +128,38 @@ def _system_title_names() -> dict[str, str]:
     return names
 
 
+# Home Menu theme DLC is one title per variation, not the same low id as the applet.
+# JPN HOME Menu is 0004003000008202; its themes are 0004008c00008200 through 00008206.
+_THEME_REGION_BY_HIGH_BYTE = {
+    0x82: 'JPN',
+    0x8F: 'USA',
+    0x98: 'EUR',
+    0xA1: 'CHN',
+    0xA9: 'KOR',
+    0xB1: 'TWN',
+}
+
+
+def theme_dlc_name(title_id: str) -> str:
+    text = title_id.lower()
+    if len(text) != 16 or not text.startswith('0004008c'):
+        return ''
+    low = int(text[8:], 16)
+    region = _THEME_REGION_BY_HIGH_BYTE.get(low >> 8)
+    variation = low & 0xFF
+    if region is None or variation > 6:
+        return ''
+    return f'Home Menu Themes ({region}) #{variation}'
+
+
 def system_title_name(title_id: str) -> str:
     text = title_id.lower()
     found = _system_title_names().get(text)
     if found:
         return found
+    themed = theme_dlc_name(text)
+    if themed:
+        return themed
     if text[:8] not in ('00040010', '00040030'):
         return ''
     return _SYSTEM_BY_LOW.get(text[8:], '')

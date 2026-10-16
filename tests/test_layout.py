@@ -130,6 +130,9 @@ class NameDbTests(unittest.TestCase):
         self.assertEqual(system_title_name('0004001000020000'), 'System Settings')
         self.assertEqual(system_title_name('0004001020020300'), 'Health and Safety Information (N3DS)')
         self.assertEqual(system_title_name('0004000000123400'), '')
+        self.assertEqual(system_title_name('0004008c00008206'), 'Home Menu Themes (JPN) #6')
+        self.assertEqual(system_title_name('0004008c00008f00'), 'Home Menu Themes (USA) #0')
+        self.assertEqual(system_title_name('0004008c00008207'), '')
         with tempfile.TemporaryDirectory() as temp:
             Path(temp, 'list_JP.json').write_text(
                 '[{"TitleID": "000480044B513945", "Name": "Example DSiWare"}]', encoding='utf-8')
