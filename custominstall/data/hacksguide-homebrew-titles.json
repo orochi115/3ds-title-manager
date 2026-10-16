@@ -1,0 +1,2461 @@
+{
+  "description": "3DS and DSiWare homebrew title IDs transcribed from the Hacks Guide Wiki user page. Some unique IDs and product codes were derived from source and may not match a release build.",
+  "source": {
+    "name": "Hacks Guide Wiki",
+    "page": "User:ItsCrocoSwine/3DS homebrew title information",
+    "url": "https://wiki.hacks.guide/wiki/User:ItsCrocoSwine/3DS_homebrew_title_information",
+    "retrieved": "2026-10-16"
+  },
+  "notes": [
+    "Some unique ID and product codes were derived from source code and may not be accurate to release",
+    "type DSiware uses 3DS TWL title-id high 00048004. The DSi equivalent high is 00030004 with the same low.",
+    "3DS unique_id is the CIA unique ID, not a DSiWare title-id low."
+  ],
+  "count": 244,
+  "counts_by_type": {
+    "3DS": 240,
+    "DSiware": 4
+  },
+  "titles": [
+    {
+      "name": "3D Pinball - Space Cadet",
+      "type": "3DS",
+      "title_id": "00040000021A3900",
+      "unique_id": "0x21A39",
+      "product_code": "CTR-P-PINBALL",
+      "source": "https://github.com/MaikelChan/SpaceCadetPinball/tree/3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "021A3900"
+    },
+    {
+      "name": "3DEins",
+      "type": "3DS",
+      "title_id": "0004000004360000",
+      "unique_id": "0x43600",
+      "product_code": "CTR-H-3DES",
+      "source": "https://github.com/Universal-Team/3DEins",
+      "title_id_high": "00040000",
+      "title_id_low": "04360000"
+    },
+    {
+      "name": "3DElf",
+      "type": "3DS",
+      "title_id": "0004000004359300",
+      "unique_id": "0x43593",
+      "product_code": "CTR-H-3DLF",
+      "source": "https://github.com/SuperSaiyajinStackZ/3DElf",
+      "title_id_high": "00040000",
+      "title_id_low": "04359300"
+    },
+    {
+      "name": "3Dfetch",
+      "type": "3DS",
+      "title_id": "0004000009F99E00",
+      "unique_id": "0x9F99E",
+      "product_code": "CTR-HB-3DFE",
+      "source": "https://github.com/aliceinpalth/3dfetch",
+      "title_id_high": "00040000",
+      "title_id_low": "09F99E00"
+    },
+    {
+      "name": "3DiceRoller",
+      "type": "3DS",
+      "title_id": "0004000000937200",
+      "unique_id": "0x09372",
+      "product_code": "CTR-r4t-DICE",
+      "source": "https://github.com/t0xid/3DiceRoller",
+      "title_id_high": "00040000",
+      "title_id_low": "00937200"
+    },
+    {
+      "name": "3DS Button Tester",
+      "type": "3DS",
+      "title_id": "000400000FF3FF00",
+      "unique_id": "0xFF3FF",
+      "product_code": "CTR-HB-APP",
+      "source": "https://github.com/TheCoolesttOne/3DS-Button-Test",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3FF00"
+    },
+    {
+      "name": "3DS CodEdit",
+      "type": "3DS",
+      "title_id": "0004000003DCE100",
+      "unique_id": "0x3DCE1",
+      "product_code": "CTR-P-CDET",
+      "source": "https://github.com/dcuevasa/3DS_CodEdit",
+      "title_id_high": "00040000",
+      "title_id_low": "03DCE100"
+    },
+    {
+      "name": "3DS Controller",
+      "type": "3DS",
+      "title_id": "000400000A1B2C00",
+      "unique_id": "0xA1B2C",
+      "product_code": "CTR-P-3DSC",
+      "source": "https://github.com/icicle1133/3ds-Controller",
+      "title_id_high": "00040000",
+      "title_id_low": "0A1B2C00"
+    },
+    {
+      "name": "3DS Donut",
+      "type": "3DS",
+      "title_id": "000400000E98BA00",
+      "unique_id": "0xE98BA",
+      "product_code": "CTR-P-DNT",
+      "source": "https://github.com/Buggem/3ds-donut",
+      "title_id_high": "00040000",
+      "title_id_low": "0E98BA00"
+    },
+    {
+      "name": "3DS eBook Reader",
+      "type": "3DS",
+      "title_id": "000400000EB11100",
+      "unique_id": "0xEB111",
+      "product_code": "CTR-HB-EBKR",
+      "source": "https://github.com/reworks-org/3DS_eBook_Reader",
+      "title_id_high": "00040000",
+      "title_id_low": "0EB11100"
+    },
+    {
+      "name": "3DS Sorting",
+      "type": "3DS",
+      "title_id": "00040000001DFC00",
+      "unique_id": "0x01DFC",
+      "product_code": "CTR-M-SORT",
+      "source": "https://github.com/memeToasty/3ds_sorting",
+      "title_id_high": "00040000",
+      "title_id_low": "001DFC00"
+    },
+    {
+      "name": "3DS_httpd",
+      "type": "3DS",
+      "title_id": "0004000000888800",
+      "unique_id": "0x08888",
+      "product_code": "CTR-N-HTTP",
+      "source": "https://github.com/dimaguy/3ds-httpd",
+      "title_id_high": "00040000",
+      "title_id_low": "00888800"
+    },
+    {
+      "name": "3DS_Quick_Reboot",
+      "type": "3DS",
+      "title_id": "000400000F002300",
+      "unique_id": "0xF0023",
+      "product_code": "AQReboot",
+      "source": "https://github.com/Asellus/3DS_Quick_Reboot",
+      "title_id_high": "00040000",
+      "title_id_low": "0F002300"
+    },
+    {
+      "name": "3DS-FileBrowser",
+      "type": "3DS",
+      "title_id": "0004000000888900",
+      "unique_id": "0x08889",
+      "product_code": "CTR-P-FBR",
+      "source": "https://github.com/ZIXT233/3DS-FileBrowser",
+      "title_id_high": "00040000",
+      "title_id_low": "00888900"
+    },
+    {
+      "name": "3DS-Random-Game-Launcher",
+      "type": "3DS",
+      "title_id": "000400000FAA5D00",
+      "unique_id": "0xFAA5D",
+      "product_code": "CTR-P-RGL",
+      "source": "https://github.com/selloa/3DS-Random-Game-Launcher",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAA5D00"
+    },
+    {
+      "name": "3DS-Recovery-Tool",
+      "type": "3DS",
+      "title_id": "0004000001660000",
+      "unique_id": "0x01600",
+      "product_code": "CTR-3D-RECT",
+      "source": "https://github.com/joel16/3DS-Recovery-Tool",
+      "title_id_high": "00040000",
+      "title_id_low": "01660000"
+    },
+    {
+      "name": "3DS-vgmstream",
+      "type": "3DS",
+      "title_id": "0004000003DAA300",
+      "unique_id": "0x3DAA3",
+      "product_code": "CTR-P-VGMS",
+      "source": "https://github.com/TricksterGuy/3ds-vgmstream",
+      "title_id_high": "00040000",
+      "title_id_low": "03DAA300"
+    },
+    {
+      "name": "3DS1010",
+      "type": "3DS",
+      "title_id": "0004000003D17000",
+      "unique_id": "0x3D170",
+      "product_code": "CTR-P-TETE",
+      "source": "https://github.com/LiquidFenrir/3ds1010",
+      "title_id_high": "00040000",
+      "title_id_low": "03D17000"
+    },
+    {
+      "name": "3DSBank",
+      "type": "DSiware",
+      "title_id": "0004800448334241",
+      "unique_id": null,
+      "product_code": "3DSBANK",
+      "source": "https://github.com/RocketRobz/3DSBank",
+      "title_id_high": "00048004",
+      "title_id_low": "48334241"
+    },
+    {
+      "name": "3DSController",
+      "type": "3DS",
+      "title_id": "000400000F0FC200",
+      "unique_id": "0xF0FC2",
+      "product_code": "CTR-N-3DSC",
+      "source": "https://github.com/CTurt/3DSController",
+      "title_id_high": "00040000",
+      "title_id_low": "0F0FC200"
+    },
+    {
+      "name": "3DSCookieClicker",
+      "type": "3DS",
+      "title_id": "0004000000F23F00",
+      "unique_id": "0x0F23F",
+      "product_code": "CTR-P-LPPD",
+      "source": "https://github.com/Creckeryop/3dsCookieClicker",
+      "title_id_high": "00040000",
+      "title_id_low": "00F23F00"
+    },
+    {
+      "name": "3DScreen",
+      "type": "3DS",
+      "title_id": "000400000F001100",
+      "unique_id": "0xF0011",
+      "product_code": "CTR-P-COLR",
+      "source": "https://github.com/AllisterMKW/3DScreen",
+      "title_id_high": "00040000",
+      "title_id_low": "0F001100"
+    },
+    {
+      "name": "3DShell",
+      "type": "3DS",
+      "title_id": "0004000001620000",
+      "unique_id": "0x16200",
+      "product_code": "CTR-3D-SHEL",
+      "source": "https://github.com/joel16/3DShell",
+      "title_id_high": "00040000",
+      "title_id_low": "01620000"
+    },
+    {
+      "name": "3DSident",
+      "type": "3DS",
+      "title_id": "0004000001600000",
+      "unique_id": "0x16000",
+      "product_code": "CTR-C-3DSI",
+      "source": "https://github.com/joel16/3DSident",
+      "title_id_high": "00040000",
+      "title_id_low": "01600000"
+    },
+    {
+      "name": "3DSident-GUI",
+      "type": "3DS",
+      "title_id": "0004000001610000",
+      "unique_id": "0x16100",
+      "product_code": "CTR-G-3DSI",
+      "source": "https://github.com/joel16/3DSident",
+      "title_id_high": "00040000",
+      "title_id_low": "01610000"
+    },
+    {
+      "name": "3dslibris",
+      "type": "3DS",
+      "title_id": "0004000003D51B00",
+      "unique_id": "0x3D51B",
+      "product_code": "CTR-H-3DLB",
+      "source": "https://github.com/RigleGit/3dslibris",
+      "title_id_high": "00040000",
+      "title_id_low": "03D51B00"
+    },
+    {
+      "name": "3DSoundboard",
+      "type": "3DS",
+      "title_id": "000400000E652800",
+      "unique_id": "0xE6528",
+      "product_code": "CTR-P-SNDB",
+      "source": "https://github.com/Sunrase/3DSoundboard",
+      "title_id_high": "00040000",
+      "title_id_low": "0E652800"
+    },
+    {
+      "name": "3DVier",
+      "type": "3DS",
+      "title_id": "0004000004359700",
+      "unique_id": "0x43597",
+      "product_code": "CTR-H-3DVR",
+      "source": "https://github.com/Universal-Team/3DVier",
+      "title_id_high": "00040000",
+      "title_id_low": "04359700"
+    },
+    {
+      "name": "3DWEB",
+      "type": "3DS",
+      "title_id": "0004000000754800",
+      "unique_id": "0x07548",
+      "product_code": "CTR-N-3DWEB",
+      "source": "https://github.com/WLHQ/3DWEB",
+      "title_id_high": "00040000",
+      "title_id_low": "00754800"
+    },
+    {
+      "name": "3DZwei",
+      "type": "3DS",
+      "title_id": "0004000004359800",
+      "unique_id": "0x43598",
+      "product_code": "CTR-H-3DZI",
+      "source": "https://github.com/Universal-Team/3DZwei",
+      "title_id_high": "00040000",
+      "title_id_low": "04359800"
+    },
+    {
+      "name": "Adastra 3D",
+      "type": "3DS",
+      "title_id": "0004000001A1D800",
+      "unique_id": "0x1A1D8",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/KrisTheDog/ADASTRA3D-for-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "01A1D800"
+    },
+    {
+      "name": "Anemone3DS",
+      "type": "3DS",
+      "title_id": "000400000BAFE000",
+      "unique_id": "0xBAFE0",
+      "product_code": "CTR-P-ANEM",
+      "source": "https://github.com/astronautlevel2/Anemone3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0BAFE000"
+    },
+    {
+      "name": "Angband",
+      "type": "3DS",
+      "title_id": "000400000FF3FF00",
+      "unique_id": "0xFF3FF",
+      "product_code": "CTR-HB-APP",
+      "source": "https://github.com/angband/angband",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3FF00"
+    },
+    {
+      "name": "Antibounce",
+      "type": "3DS",
+      "title_id": "0004000000A45E00",
+      "unique_id": "0x0A45E",
+      "product_code": "CTR-P-ANTB",
+      "source": "https://github.com/TurtleP/Antibounce",
+      "title_id_high": "00040000",
+      "title_id_low": "00A45E00"
+    },
+    {
+      "name": "Apotris",
+      "type": "3DS",
+      "title_id": "000400000A971500",
+      "unique_id": "0xA9715",
+      "product_code": "CTR-H-APTR",
+      "source": "https://gitea.com/akouzoukos/apotris",
+      "title_id_high": "00040000",
+      "title_id_low": "0A971500"
+    },
+    {
+      "name": "Artic Base Server",
+      "type": "3DS",
+      "title_id": "000400000ABA5E00",
+      "unique_id": "0xABA5E",
+      "product_code": "CTR-P-ARBS",
+      "source": "https://github.com/PabloMK7/ArticBaseServer",
+      "title_id_high": "00040000",
+      "title_id_low": "0ABA5E00"
+    },
+    {
+      "name": "Atari800",
+      "type": "3DS",
+      "title_id": "000400000A800000",
+      "unique_id": "0xA8000",
+      "product_code": "CTR-N-A800",
+      "source": "https://github.com/RandomMan25XX/atari800-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0A800000"
+    },
+    {
+      "name": "aurochat",
+      "type": "3DS",
+      "title_id": "00040000001AC200",
+      "unique_id": "0x01AC2",
+      "product_code": "CTR-P-AURC",
+      "source": "https://github.com/Unitendo/aurorachat",
+      "title_id_high": "00040000",
+      "title_id_low": "001AC200"
+    },
+    {
+      "name": "Bandolero 3DS",
+      "type": "3DS",
+      "title_id": "000400000FF3FF00",
+      "unique_id": "0xFF3FF",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/Tristanabs/bandolero3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3FF00"
+    },
+    {
+      "name": "Battery_mark_for_3DS",
+      "type": "3DS",
+      "title_id": "000400000EC50000",
+      "unique_id": "0xEC500",
+      "product_code": "CTR-Bmark",
+      "source": "https://github.com/Core-2-Extreme/Battery_mark_for_3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC50000"
+    },
+    {
+      "name": "BCSTM-Player",
+      "type": "3DS",
+      "title_id": "0004000007893300",
+      "unique_id": "0x78933",
+      "product_code": "CTR-H-BCST",
+      "source": "https://github.com/NPI-D7/BCSTM-Player",
+      "title_id_high": "00040000",
+      "title_id_low": "07893300"
+    },
+    {
+      "name": "Better-NFCReader",
+      "type": "3DS",
+      "title_id": "000400000BC46900",
+      "unique_id": "0xBC469",
+      "product_code": "I-LOVE-YIXI",
+      "source": "https://github.com/cylin577/Better-NFCReader",
+      "title_id_high": "00040000",
+      "title_id_low": "0BC46900"
+    },
+    {
+      "name": "Biniax2-3DS",
+      "type": "3DS",
+      "title_id": "0004000000997800",
+      "unique_id": "0x09978",
+      "product_code": "CTR-P-BNX2",
+      "source": "https://github.com/nop90/Biniax2-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00997800"
+    },
+    {
+      "name": "Blockamok Remix",
+      "type": "3DS",
+      "title_id": "0004000003F18B00",
+      "unique_id": "0x3F18B",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/Mode8fx/blockamok",
+      "title_id_high": "00040000",
+      "title_id_low": "03F18B00"
+    },
+    {
+      "name": "BootNTRSelector",
+      "type": "3DS",
+      "title_id": "000400000EB00000",
+      "unique_id": "0xEB000",
+      "product_code": "CTR-P-BNTR",
+      "source": "https://github.com/Nanquitas/BootNTR",
+      "title_id_high": "00040000",
+      "title_id_low": "0EB00000"
+    },
+    {
+      "name": "BootNTRSelector_Mode3",
+      "type": "3DS",
+      "title_id": "000400000EB30000",
+      "unique_id": "0xEB300",
+      "product_code": "CTR-P-BNTR",
+      "source": "https://github.com/Nanquitas/BootNTR",
+      "title_id_high": "00040000",
+      "title_id_low": "0EB30000"
+    },
+    {
+      "name": "Bottomless Block Barrage",
+      "type": "3DS",
+      "title_id": "000400000B0B1B00",
+      "unique_id": "0xB0B1B",
+      "product_code": "CTR-P-BBB",
+      "source": "https://github.com/TricksterGuy/bottomless-block-barrage",
+      "title_id_high": "00040000",
+      "title_id_low": "0B0B1B00"
+    },
+    {
+      "name": "ButtonPresser3DS",
+      "type": "3DS",
+      "title_id": "0004000000463000",
+      "unique_id": "0x04630",
+      "product_code": "CTR-P-PRES",
+      "source": "https://github.com/trainboy2019/ButtonPresser3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00463000"
+    },
+    {
+      "name": "CaptureAssistant",
+      "type": "3DS",
+      "title_id": "0004000000686200",
+      "unique_id": "0x06862",
+      "product_code": "CTR-HB-LUMA",
+      "source": "https://github.com/ItsDeidara/CaptureAssistant",
+      "title_id_high": "00040000",
+      "title_id_low": "00686200"
+    },
+    {
+      "name": "CEC Tool",
+      "type": "3DS",
+      "title_id": "000400000F657500",
+      "unique_id": "0xF6575",
+      "product_code": "cectool",
+      "source": "https://gitlab.com/sorunome/cectool",
+      "title_id_high": "00040000",
+      "title_id_low": "0F657500"
+    },
+    {
+      "name": "Checkpoint",
+      "type": "3DS",
+      "title_id": "000400000BCFFF00",
+      "unique_id": "0xBCFFF",
+      "product_code": "CTR-HB-CKPT",
+      "source": "https://github.com/BernardoGiordano/Checkpoint",
+      "title_id_high": "00040000",
+      "title_id_low": "0BCFFF00"
+    },
+    {
+      "name": "Chrome T-Rex Runner 3DS",
+      "type": "3DS",
+      "title_id": "0004000000A1B200",
+      "unique_id": "0x0A1B2",
+      "product_code": "CTR-P-BREX",
+      "source": "https://github.com/BlyZeDev/T-Rex-Game-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00A1B200"
+    },
+    {
+      "name": "CIA Installer",
+      "type": "3DS",
+      "title_id": "0004000008B61400",
+      "unique_id": "0x8B614",
+      "product_code": "CTR-P-INST",
+      "source": "https://github.com/Zachary-Rude/CIA-Installer",
+      "title_id_high": "00040000",
+      "title_id_low": "08B61400"
+    },
+    {
+      "name": "Citrahold-3DS",
+      "type": "3DS",
+      "title_id": "000400000FF3FE00",
+      "unique_id": "0xFF3FE",
+      "product_code": "CTR-HB-CTHD",
+      "source": "https://github.com/regimensocial/Citrahold-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3FE00"
+    },
+    {
+      "name": "Class of '09",
+      "type": "3DS",
+      "title_id": "000400000FA94500",
+      "unique_id": "0xFA945",
+      "product_code": "CTR-C-CL91",
+      "source": "https://github.com/Bilbard/classof3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0FA94500"
+    },
+    {
+      "name": "ClassicCube",
+      "type": "3DS",
+      "title_id": "0004000005115D00",
+      "unique_id": "0x5115D",
+      "product_code": "CCBE",
+      "source": "https://github.com/ClassiCube/ClassiCube",
+      "title_id_high": "00040000",
+      "title_id_low": "05115D00"
+    },
+    {
+      "name": "CPyMO",
+      "type": "3DS",
+      "title_id": "000400000F309800",
+      "unique_id": "0xF3098",
+      "product_code": "CTR-HB-PYMO",
+      "source": "https://github.com/Strrationalism/CPyMO",
+      "title_id_high": "00040000",
+      "title_id_low": "0F309800"
+    },
+    {
+      "name": "Craftus Redesigned",
+      "type": "3DS",
+      "title_id": "000400000FAB2400",
+      "unique_id": "0xFAB24",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/yunes-0840/Craftus-Redesigned",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAB2400"
+    },
+    {
+      "name": "Craftus Reloaded",
+      "type": "3DS",
+      "title_id": "000400000FAB2400",
+      "unique_id": "0xFAB24",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/RSDuck/craftus_reloaded",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAB2400"
+    },
+    {
+      "name": "CS3DS",
+      "type": "3DS",
+      "title_id": "000400000F1BAD00",
+      "unique_id": "0xF1BAD",
+      "product_code": "CTR-P-CS3D",
+      "source": "https://github.com/machinamentum/CS3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0F1BAD00"
+    },
+    {
+      "name": "CSTimer 3DS",
+      "type": "3DS",
+      "title_id": "000400000FAA5E00",
+      "unique_id": "0xFAA5E",
+      "product_code": "CTR-PBC-PWDR",
+      "source": "https://github.com/Menshion01/CSTimer-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAA5E00"
+    },
+    {
+      "name": "CTGP-7",
+      "type": "3DS",
+      "title_id": "0004000003070C00",
+      "unique_id": "0x3070C",
+      "product_code": "CTR-P-CTGP",
+      "source": "https://ctgp-7.github.io/",
+      "title_id_high": "00040000",
+      "title_id_low": "03070C00"
+    },
+    {
+      "name": "CTGP7-SaveTransfer",
+      "type": "3DS",
+      "title_id": "0004000001690200",
+      "unique_id": "0x16902",
+      "product_code": "CY64-CMSV",
+      "source": "https://github.com/CyberYoshi64/CTGP7-SaveTransfer",
+      "title_id_high": "00040000",
+      "title_id_low": "01690200"
+    },
+    {
+      "name": "CTR Alarmo",
+      "type": "3DS",
+      "title_id": "000400000C4A1A00",
+      "unique_id": "0xC4A1A",
+      "product_code": "CTR-JUE-FALR",
+      "source": "https://github.com/FelixHomebrew/CtrAlarmo",
+      "title_id_high": "00040000",
+      "title_id_low": "0C4A1A00"
+    },
+    {
+      "name": "ctrmus",
+      "type": "3DS",
+      "title_id": "000400000FF3CC00",
+      "unique_id": "0xFF3CC",
+      "product_code": "CTR-P-CMUS",
+      "source": "https://github.com/deltabeard/ctrmus",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3CC00"
+    },
+    {
+      "name": "ctroller",
+      "type": "3DS",
+      "title_id": "000400000F3D5C00",
+      "unique_id": "0xF3D5C",
+      "product_code": "CTR-HB-ctroller",
+      "source": "https://github.com/phijor/ctroller",
+      "title_id_high": "00040000",
+      "title_id_low": "0F3D5C00"
+    },
+    {
+      "name": "ctrQuake",
+      "type": "3DS",
+      "title_id": "000400000FF12300",
+      "unique_id": "0xFF123",
+      "product_code": "CTR-P-QUAK",
+      "source": "https://github.com/masterfeizz/ctrQuake",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF12300"
+    },
+    {
+      "name": "CtrRGBPAT2",
+      "type": "3DS",
+      "title_id": "000400000D37BB00",
+      "unique_id": "0xD37BB",
+      "product_code": "Idfk-man-V2.3",
+      "source": "https://github.com/Golem642/CtrRGBPAT2",
+      "title_id_high": "00040000",
+      "title_id_low": "0D37BB00"
+    },
+    {
+      "name": "CTRXplorer",
+      "type": "3DS",
+      "title_id": "0004000000287000",
+      "unique_id": "0x02870",
+      "product_code": "CTR-P-CTRX",
+      "source": "https://github.com/d0k3/CTRXplorer",
+      "title_id_high": "00040000",
+      "title_id_low": "00287000"
+    },
+    {
+      "name": "DaedalusX64",
+      "type": "3DS",
+      "title_id": "000400000DAED300",
+      "unique_id": "0xDAED3",
+      "product_code": "CTR-P-DAED",
+      "source": "https://github.com/masterfeizz/DaedalusX64-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0DAED300"
+    },
+    {
+      "name": "DDLC-LOVE",
+      "type": "3DS",
+      "title_id": "0004000000DDFC00",
+      "unique_id": "0x0DDFC",
+      "product_code": "CTR-H-DDLC",
+      "source": "https://github.com/LukeZGD/DDLC-LOVE",
+      "title_id_high": "00040000",
+      "title_id_low": "00DDFC00"
+    },
+    {
+      "name": "DemoReset",
+      "type": "3DS",
+      "title_id": "0004000007456000",
+      "unique_id": "0x74560",
+      "product_code": "NPX-GF-XTST",
+      "source": "https://github.com/NPXTobi/Demo-Reset",
+      "title_id_high": "00040000",
+      "title_id_low": "07456000"
+    },
+    {
+      "name": "devilutionX",
+      "type": "3DS",
+      "title_id": "0004000003F39500",
+      "unique_id": "0x3F395",
+      "product_code": "CTR-P-DIABLO",
+      "source": "https://github.com/diasurgical/devilutionX",
+      "title_id_high": "00040000",
+      "title_id_low": "03F39500"
+    },
+    {
+      "name": "Doors-3DS",
+      "type": "3DS",
+      "title_id": "000400000D007500",
+      "unique_id": "0xD0075",
+      "product_code": "CTR-P-DOOR",
+      "source": "https://github.com/carmander152/Doors-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0D007500"
+    },
+    {
+      "name": "dosbox-3ds",
+      "type": "3DS",
+      "title_id": "000400000D048600",
+      "unique_id": "0xD0486",
+      "product_code": "CTR-P-DOSBOX",
+      "source": "https://github.com/MrHuu/dosbox-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0D048600"
+    },
+    {
+      "name": "DrawAttack",
+      "type": "3DS",
+      "title_id": "0004000000771800",
+      "unique_id": "0x07718",
+      "product_code": "DrawAttack",
+      "source": "https://github.com/Cruel/DrawAttack",
+      "title_id_high": "00040000",
+      "title_id_low": "00771800"
+    },
+    {
+      "name": "drider",
+      "type": "3DS",
+      "title_id": "0004000000D81D00",
+      "unique_id": "0x0D81D",
+      "product_code": "CTR-P-DRDR",
+      "source": "https://github.com/ingolemo/drider",
+      "title_id_high": "00040000",
+      "title_id_low": "00D81D00"
+    },
+    {
+      "name": "dses",
+      "type": "3DS",
+      "title_id": "000400000EF10200",
+      "unique_id": "0xEF102",
+      "product_code": "CTR-EV-DSES",
+      "source": "https://github.com/noirscape/dses",
+      "title_id_high": "00040000",
+      "title_id_low": "0EF10200"
+    },
+    {
+      "name": "DSP1",
+      "type": "3DS",
+      "title_id": "0004000000D58100",
+      "unique_id": "0x0D591",
+      "product_code": "CTR-P-DSP1",
+      "source": "https://github.com/zoogie/DSP1",
+      "title_id_high": "00040000",
+      "title_id_low": "00D58100"
+    },
+    {
+      "name": "Dungeions of Daggorath 3DS",
+      "type": "3DS",
+      "title_id": "0004000003DD0D00",
+      "unique_id": "0x3DD0D",
+      "product_code": "CTR-P-3DOD",
+      "source": "https://github.com/pyroticinsanity/3dsdod",
+      "title_id_high": "00040000",
+      "title_id_low": "03DD0D00"
+    },
+    {
+      "name": "easyrpgdlre",
+      "type": "3DS",
+      "title_id": "0004000000A54400",
+      "unique_id": "0x0A544",
+      "product_code": "HBS-P-EZUP",
+      "source": "https://github.com/gnmmarechal/easyrpgdlre",
+      "title_id_high": "00040000",
+      "title_id_low": "00A54400"
+    },
+    {
+      "name": "EDuke3D",
+      "type": "3DS",
+      "title_id": "000400000FF12400",
+      "unique_id": "0xFF124",
+      "product_code": "CTR-P-DUKE",
+      "source": "https://github.com/masterfeizz/EDuke3D",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF12400"
+    },
+    {
+      "name": "essentialsubmit",
+      "type": "3DS",
+      "title_id": "00040000050AF500",
+      "unique_id": "0x50AF5",
+      "product_code": "CTR-H-SOAP",
+      "source": "https://github.com/nh-server/essentialsubmit",
+      "title_id_high": "00040000",
+      "title_id_low": "050AF500"
+    },
+    {
+      "name": "Evolution_Sav3D_Me",
+      "type": "3DS",
+      "title_id": "000400000FAC1C00",
+      "unique_id": "0xFAC1C",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/Manurocker95/Evolution_Sav3D_Me",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAC1C00"
+    },
+    {
+      "name": "EzB9SUpdater",
+      "type": "3DS",
+      "title_id": "000400000ECB9500",
+      "unique_id": "0xECB95",
+      "product_code": "CTR-P-EZB9",
+      "source": "https://github.com/PabloMK7/EzB9SUpdater",
+      "title_id_high": "00040000",
+      "title_id_low": "0ECB9500"
+    },
+    {
+      "name": "FAKE-08",
+      "type": "3DS",
+      "title_id": "000400000F8F0800",
+      "unique_id": "0xF8F08",
+      "product_code": "CTR-P-FK08",
+      "source": "https://github.com/jtothebell/fake-08",
+      "title_id_high": "00040000",
+      "title_id_low": "0F8F0800"
+    },
+    {
+      "name": "Falling Blocks Watch Out",
+      "type": "3DS",
+      "title_id": "0004000000FA6500",
+      "unique_id": "0x0FA65",
+      "product_code": "CTR-P-FBWO",
+      "source": "https://github.com/Spaqin/fbwo-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00FA6500"
+    },
+    {
+      "name": "FastPlayCoin",
+      "type": "3DS",
+      "title_id": "00040000000F9800",
+      "unique_id": "0x00F98",
+      "product_code": "CTR-P-PlayCoin",
+      "source": "https://github.com/CorySanin/FastPlayCoin",
+      "title_id_high": "00040000",
+      "title_id_low": "000F9800"
+    },
+    {
+      "name": "FBI-NH",
+      "type": "3DS",
+      "title_id": "000400000F800100",
+      "unique_id": "0xF8001",
+      "product_code": "CTR-P-CFBI",
+      "source": "https://github.com/nh-server/FBI-NH",
+      "title_id_high": "00040000",
+      "title_id_low": "0F800100"
+    },
+    {
+      "name": "Flappy-Bird",
+      "type": "3DS",
+      "title_id": "00040000064D7000",
+      "unique_id": "0x64D70",
+      "product_code": "CTR-H-NPFB",
+      "source": "https://github.com/NPI-D7/Flappy-Bird",
+      "title_id_high": "00040000",
+      "title_id_low": "064D7000"
+    },
+    {
+      "name": "Flappy3DS",
+      "type": "3DS",
+      "title_id": "0004000000133700",
+      "unique_id": "0x01337",
+      "product_code": "CTR-FLAPPY-3DS",
+      "source": "https://github.com/Komas19-new/flappy3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00133700"
+    },
+    {
+      "name": "fMSX3DS",
+      "type": "3DS",
+      "title_id": "000400000736E400",
+      "unique_id": "0x736E4",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/TomiokaH01/fMSX3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0736E400"
+    },
+    {
+      "name": "Forecast",
+      "type": "3DS",
+      "title_id": "000400000E2C7700",
+      "unique_id": "0xE2C77",
+      "product_code": "CTR-P-FCST",
+      "source": "https://github.com/NatTupper/Forecast",
+      "title_id_high": "00040000",
+      "title_id_low": "0E2C7700"
+    },
+    {
+      "name": "FourthTube",
+      "type": "3DS",
+      "title_id": "000400000BF74D00",
+      "unique_id": "0xBF74D",
+      "product_code": "CTR-TYT",
+      "source": "https://github.com/erievs/FourthTube",
+      "title_id_high": "00040000",
+      "title_id_low": "0BF74D00"
+    },
+    {
+      "name": "FriendMii",
+      "type": "3DS",
+      "title_id": "0004000001606600",
+      "unique_id": "0x16066",
+      "product_code": "CTR-FR-DMII",
+      "source": "https://github.com/joel16/FriendMii",
+      "title_id_high": "00040000",
+      "title_id_low": "01606600"
+    },
+    {
+      "name": "FTPD",
+      "type": "3DS",
+      "title_id": "000400000BEEF500",
+      "unique_id": "0xBEEF5",
+      "product_code": "ftpd",
+      "source": "https://github.com/mtheall/ftpd",
+      "title_id_high": "00040000",
+      "title_id_low": "0BEEF500"
+    },
+    {
+      "name": "GameYob",
+      "type": "3DS",
+      "title_id": "0004000000192700",
+      "unique_id": "0x01927",
+      "product_code": "CTR-P-GYOB",
+      "source": "https://github.com/SombrAbsol/GameYob-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00192700"
+    },
+    {
+      "name": "GameYob",
+      "type": "DSiware",
+      "title_id": "0004800447594F42",
+      "unique_id": null,
+      "product_code": "HOMEBREW",
+      "source": "https://github.com/Stewmath/GameYob",
+      "title_id_high": "00048004",
+      "title_id_low": "47594F42"
+    },
+    {
+      "name": "GitHub3DS",
+      "type": "3DS",
+      "title_id": "000400000F133D00",
+      "unique_id": "0xF133D",
+      "product_code": "CTR-P-GH3D",
+      "source": "https://gitlab.com/MorrisTheGamer/GitHub3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0F133D00"
+    },
+    {
+      "name": "GraphCalc3DS",
+      "type": "3DS",
+      "title_id": "000400000F718200",
+      "unique_id": "0xF7183",
+      "product_code": "GraphCalc3DS",
+      "source": "https://github.com/flarn2006/GraphCalc3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0F718200"
+    },
+    {
+      "name": "Griffon-Legend-3DS",
+      "type": "3DS",
+      "title_id": "0004000000998000",
+      "unique_id": "0x09980",
+      "product_code": "CTR-P-GRFL",
+      "source": "https://github.com/nop90/Griffon-Legend-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00998000"
+    },
+    {
+      "name": "GYTB",
+      "type": "3DS",
+      "title_id": "00040000001DDB00",
+      "unique_id": "0x01DDB",
+      "product_code": "CTR-P-GYTB",
+      "source": "https://github.com/MrCheeze/GYTB",
+      "title_id_high": "00040000",
+      "title_id_low": "001DDB00"
+    },
+    {
+      "name": "Halo Renewed Solitude",
+      "type": "3DS",
+      "title_id": "000400000371EB00",
+      "unique_id": "0x371EB",
+      "product_code": "CTR-P-HALO",
+      "source": "https://github.com/ArcadeJumpers/RenewedSolitude3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0371EB00"
+    },
+    {
+      "name": "Halo Revamped 3DS",
+      "type": "3DS",
+      "title_id": "000400000371EB00",
+      "unique_id": "0x371EB",
+      "product_code": "CTR-P-HALO",
+      "source": "https://github.com/CollinScripter/Revamped3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0371EB00"
+    },
+    {
+      "name": "Hax0r",
+      "type": "3DS",
+      "title_id": "0004000000D39A00",
+      "unique_id": "0x0D39A",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/TurtleP/Hax0r",
+      "title_id_high": "00040000",
+      "title_id_low": "00D39A00"
+    },
+    {
+      "name": "HexIsoPath",
+      "type": "3DS",
+      "title_id": "0004000005831600",
+      "unique_id": "0x58316",
+      "product_code": "CTR-P-HXIP",
+      "source": "https://github.com/LiquidFenrir/HexIsoPath",
+      "title_id_high": "00040000",
+      "title_id_low": "05831600"
+    },
+    {
+      "name": "homebrew_launcher_dummy",
+      "type": "3DS",
+      "title_id": "000400000D921E00",
+      "unique_id": "0x0921E",
+      "product_code": "HBL-LDR",
+      "source": "https://github.com/PabloMK7/homebrew_launcher_dummy",
+      "title_id_high": "00040000",
+      "title_id_low": "0D921E00"
+    },
+    {
+      "name": "HoriHD-Gallery",
+      "type": "3DS",
+      "title_id": "0004000004809E00",
+      "unique_id": "0x4809E",
+      "product_code": "CTR-H-HORI",
+      "source": "https://github.com/RocketRobz/HoriHD-Gallery",
+      "title_id_high": "00040000",
+      "title_id_low": "04809E00"
+    },
+    {
+      "name": "hrt3DS",
+      "type": "3DS",
+      "title_id": "0004000000FF8000",
+      "unique_id": "0x0FF80",
+      "product_code": "HRT-00B-FFF8",
+      "source": "https://github.com/vinegar77/hrt-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00FF8000"
+    },
+    {
+      "name": "InPost3DS",
+      "type": "3DS",
+      "title_id": "0004000003905700",
+      "unique_id": "0x39057",
+      "product_code": "NPOSTDS",
+      "source": "https://github.com/TehFridge/InPost3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "03905700"
+    },
+    {
+      "name": "ioQuake3DS",
+      "type": "3DS",
+      "title_id": "000400000FF12500",
+      "unique_id": "0xFF125",
+      "product_code": "CTR-P-OARENA",
+      "source": "https://github.com/masterfeizz/ioQuake3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF12500"
+    },
+    {
+      "name": "IP-Cam Viewer",
+      "type": "3DS",
+      "title_id": "000400000FF3FF00",
+      "unique_id": "0xFF3FF",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/MC-Gaming-59o/Homebrew-3DS-IP-Webcam-Viewer/blob/main/app.rsf",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3FF00"
+    },
+    {
+      "name": "isle portable",
+      "type": "3DS",
+      "title_id": "00040000076E7E00",
+      "unique_id": "0x76E7E",
+      "product_code": "CTR-P-ISLE",
+      "source": "https://github.com/isledecomp/isle-portable",
+      "title_id_high": "00040000",
+      "title_id_low": "076E7E00"
+    },
+    {
+      "name": "JKSM",
+      "type": "3DS",
+      "title_id": "0004000002C23200",
+      "unique_id": "0x2C232",
+      "product_code": "CTR-HB-JKSM",
+      "source": "https://github.com/J-D-K/JKSM",
+      "title_id_high": "00040000",
+      "title_id_low": "02C23200"
+    },
+    {
+      "name": "kavita-3ds",
+      "type": "3DS",
+      "title_id": "000400000F8C3100",
+      "unique_id": "0xF8C31",
+      "product_code": "CTR-P-CAVI",
+      "source": "https://github.com/ellio86/kavita-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0F8C3100"
+    },
+    {
+      "name": "Lasagna",
+      "type": "3DS",
+      "title_id": "000400000BEEEF00",
+      "unique_id": "0xBEEEF",
+      "product_code": "CTR-HB-LSGN",
+      "source": "https://github.com/BernardoGiordano/Lasagna",
+      "title_id_high": "00040000",
+      "title_id_low": "0BEEEF00"
+    },
+    {
+      "name": "LeafEdit",
+      "type": "3DS",
+      "title_id": "0004000004392100",
+      "unique_id": "0x43921",
+      "product_code": "CTR-H-LEDT",
+      "source": "https://github.com/Universal-Team/LeafEdit",
+      "title_id_high": "00040000",
+      "title_id_low": "04392100"
+    },
+    {
+      "name": "LeafEdit-Pattern-Editor",
+      "type": "3DS",
+      "title_id": "0004000004342100",
+      "unique_id": "0x43421",
+      "product_code": "CTR-H-LPTE",
+      "source": "https://github.com/SuperSaiyajinStackZ/LeafEdit-Pattern-Editor",
+      "title_id_high": "00040000",
+      "title_id_low": "04342100"
+    },
+    {
+      "name": "Level256 Installer",
+      "type": "3DS",
+      "title_id": "0004000002560200",
+      "unique_id": "0x25602",
+      "product_code": "CTR-HB-L256",
+      "source": "https://github.com/Tekito-256/level256-installer",
+      "title_id_high": "00040000",
+      "title_id_low": "02560200"
+    },
+    {
+      "name": "LimePlayer3DS",
+      "type": "3DS",
+      "title_id": "000400000EDA0600",
+      "unique_id": "0xEDA06",
+      "product_code": "CTR-P-LIME",
+      "source": "https://github.com/oreo639/LimePlayer3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0EDA0600"
+    },
+    {
+      "name": "Line for 3DS",
+      "type": "3DS",
+      "title_id": "000400000EC95000",
+      "unique_id": "0xEC950",
+      "product_code": "CTR-Line",
+      "source": "https://github.com/Core-2-Extreme/Line_for_3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC95000"
+    },
+    {
+      "name": "Ludo3DS",
+      "type": "3DS",
+      "title_id": "0004000004359500",
+      "unique_id": "0x43595",
+      "product_code": "CTR-H-LD3D",
+      "source": "https://github.com/SuperSaiyajinStackZ/Ludo3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "04359500"
+    },
+    {
+      "name": "LumaLocaleSwitcher",
+      "type": "3DS",
+      "title_id": "000400000A0CA100",
+      "unique_id": "0xA0CA1",
+      "product_code": "LumaLocale",
+      "source": "https://github.com/Possum/LumaLocaleSwitcher",
+      "title_id_high": "00040000",
+      "title_id_low": "0A0CA100"
+    },
+    {
+      "name": "LumaUpdater",
+      "type": "3DS",
+      "title_id": "00040000001DEB00",
+      "unique_id": "0x01DEB",
+      "product_code": "CTR-L-UPDR",
+      "source": "https://github.com/KunoichiZ/lumaupdate",
+      "title_id_high": "00040000",
+      "title_id_low": "001DEB00"
+    },
+    {
+      "name": "Magic Draw",
+      "type": "3DS",
+      "title_id": "000400000CF02400",
+      "unique_id": "0xCF024",
+      "product_code": "CTR-MD",
+      "source": "https://github.com/natsuneco/magic-draw",
+      "title_id_high": "00040000",
+      "title_id_low": "0CF02400"
+    },
+    {
+      "name": "Mars3DS",
+      "type": "3DS",
+      "title_id": "0004000000232100",
+      "unique_id": "0x02321",
+      "product_code": "CTR-H-MARS",
+      "source": "https://github.com/BotRandomness/Mars3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00232100"
+    },
+    {
+      "name": "MCU Bricker",
+      "type": "3DS",
+      "title_id": "000400000DEAD100",
+      "unique_id": "0xDEAD1",
+      "product_code": "CTR-P-AZAA",
+      "source": "https://github.com/MechanicalDragon0687/MCU_Bricker_tinydb",
+      "title_id_high": "00040000",
+      "title_id_low": "0DEAD100"
+    },
+    {
+      "name": "mGBA",
+      "type": "3DS",
+      "title_id": "00040000001A1E00",
+      "unique_id": "0x01A1E",
+      "product_code": "CTR-P-MGBA",
+      "source": "https://github.com/mgba-emu/mgba",
+      "title_id_high": "00040000",
+      "title_id_low": "001A1E00"
+    },
+    {
+      "name": "ModMoon",
+      "type": "3DS",
+      "title_id": "0004000000A73A00",
+      "unique_id": "0x0A73A",
+      "product_code": "ModMoon",
+      "source": "https://github.com/Swiftloke/ModMoon",
+      "title_id_high": "00040000",
+      "title_id_low": "00A73A00"
+    },
+    {
+      "name": "Moonlight Streaming Client",
+      "type": "3DS",
+      "title_id": "0004000000360000",
+      "unique_id": "0x03600",
+      "product_code": "CTR-P-MOONLIGHT",
+      "source": "https://github.com/zoeyjodon/moonlight-N3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00360000"
+    },
+    {
+      "name": "Multidownload",
+      "type": "3DS",
+      "title_id": "0004000000103000",
+      "unique_id": "0x01030",
+      "product_code": "CTR-E-DOWN",
+      "source": "https://github.com/hax0kartik/Multidownload",
+      "title_id_high": "00040000",
+      "title_id_low": "00103000"
+    },
+    {
+      "name": "nd-hb-menu bootstrap",
+      "type": "3DS",
+      "title_id": "0004000000715300",
+      "unique_id": "0x07153",
+      "product_code": "CTR-P-HBMU",
+      "source": "https://github.com/zoogie/Stuff",
+      "title_id_high": "00040000",
+      "title_id_low": "00715300"
+    },
+    {
+      "name": "Neopop-SDL",
+      "type": "3DS",
+      "title_id": "0004000000998600",
+      "unique_id": "0x09986",
+      "product_code": "CTR-P-NEOP",
+      "source": "https://github.com/nop90/Neopop-SDL",
+      "title_id_high": "00040000",
+      "title_id_low": "00998600"
+    },
+    {
+      "name": "NetPass",
+      "type": "3DS",
+      "title_id": "000400000F657400",
+      "unique_id": "0xF6574",
+      "product_code": "netpass",
+      "source": "https://gitlab.com/3ds-netpass/netpass",
+      "title_id_high": "00040000",
+      "title_id_low": "0F657400"
+    },
+    {
+      "name": "Nimbus",
+      "type": "3DS",
+      "title_id": "000400000D40D200",
+      "unique_id": "0xD49D2",
+      "product_code": "nimbus",
+      "source": "https://github.com/PretendoNetwork/nimbus",
+      "title_id_high": "00040000",
+      "title_id_low": "0D40D200"
+    },
+    {
+      "name": "NitroHax3DS",
+      "type": "DSiware",
+      "title_id": "0004800443484354",
+      "unique_id": null,
+      "product_code": "NTR NITROXAX",
+      "source": "https://github.com/Epicpkmn11/NitroHax3DS",
+      "title_id_high": "00048004",
+      "title_id_low": "43484354"
+    },
+    {
+      "name": "Noise Commander 3DS",
+      "type": "3DS",
+      "title_id": "000400000BEEF600",
+      "unique_id": "0xBEEF6",
+      "product_code": "noisecmdr",
+      "source": "https://github.com/gearmo3ds/noisecommander3dsdemo",
+      "title_id_high": "00040000",
+      "title_id_low": "0BEEF600"
+    },
+    {
+      "name": "Notebook3DS",
+      "type": "3DS",
+      "title_id": "000400000ECA0000",
+      "unique_id": "0xECA00",
+      "product_code": "CTR-NTBK",
+      "source": "https://github.com/Milk-Cool/Notebook3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0ECA0000"
+    },
+    {
+      "name": "Notepad3DS",
+      "type": "3DS",
+      "title_id": "000400000FD3FF00",
+      "unique_id": "0xFD3FF",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/RMcTn/Notepad3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0FD3FF00"
+    },
+    {
+      "name": "NotifyMii",
+      "type": "3DS",
+      "title_id": "000400000ED99000",
+      "unique_id": "0xED990",
+      "product_code": "CTR-HB-NEWS",
+      "source": "https://github.com/Ryuzaki-MrL/NotifyMii",
+      "title_id_high": "00040000",
+      "title_id_low": "0ED99000"
+    },
+    {
+      "name": "NTR-HR",
+      "type": "3DS",
+      "title_id": "000400000EB00000",
+      "unique_id": "0xEB000",
+      "product_code": "CTR-P-BNTR",
+      "source": "https://github.com/xzn/ntr-hr",
+      "title_id_high": "00040000",
+      "title_id_low": "0EB00000"
+    },
+    {
+      "name": "OFF",
+      "type": "3DS",
+      "title_id": "000400000F0F0F00",
+      "unique_id": "0xF0F0F",
+      "product_code": "CTR-P-ERPG",
+      "source": "https://github.com/fauxfennec/OFF3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0F0F0F00"
+    },
+    {
+      "name": "Omega",
+      "type": "3DS",
+      "title_id": "0004000006942900",
+      "unique_id": "0x69420",
+      "product_code": "CTR-E-OMEGA",
+      "source": "https://github.com/Omega-Numworks/Omega",
+      "title_id_high": "00040000",
+      "title_id_low": "06942900"
+    },
+    {
+      "name": "OmniSpeak-3DS",
+      "type": "3DS",
+      "title_id": "0004000003163E00",
+      "unique_id": "0x3163E",
+      "product_code": "CTR-OMS",
+      "source": "https://github.com/RetroGamer02/omnispeak-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "03163E00"
+    },
+    {
+      "name": "OoT3D_Randomizer",
+      "type": "3DS",
+      "title_id": "0004000008AD5B00",
+      "unique_id": "0x8AD5B",
+      "product_code": "CTR-P-VDCN",
+      "source": "https://github.com/gamestabled/OoT3D_Randomizer",
+      "title_id_high": "00040000",
+      "title_id_low": "08AD5B00"
+    },
+    {
+      "name": "OpenAGBLauncher",
+      "type": "3DS",
+      "title_id": "000400000A900200",
+      "unique_id": "0xA9002",
+      "product_code": "CTR-P-AGBB",
+      "source": "https://db.universal-team.net/3ds/openagblauncher",
+      "title_id_high": "00040000",
+      "title_id_low": "0A900200"
+    },
+    {
+      "name": "openbor-3ds",
+      "type": "3DS",
+      "title_id": "000400000B043D00",
+      "unique_id": "0xB043D",
+      "product_code": "CTR-P-OPENBOR",
+      "source": "https://github.com/MrHuu/openbor-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0B043D00"
+    },
+    {
+      "name": "OpenSyobon3DS",
+      "type": "3DS",
+      "title_id": "0004000000997100",
+      "unique_id": "0x09971",
+      "product_code": "CTR-P-SYOB",
+      "source": "https://github.com/nop90/OpenSyobon3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00997100"
+    },
+    {
+      "name": "OPENTitus_MOKTAR",
+      "type": "3DS",
+      "title_id": "000400000FF34100",
+      "unique_id": "0xFF341",
+      "product_code": "CTR-P-PTTS",
+      "source": "https://github.com/MrHuu/opentitus-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF34100"
+    },
+    {
+      "name": "OpenTitus_TITUS",
+      "type": "3DS",
+      "title_id": "000400000FF34000",
+      "unique_id": "0xFF340",
+      "product_code": "CTR-P-PTTS",
+      "source": "https://github.com/MrHuu/opentitus-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF34000"
+    },
+    {
+      "name": "Opentyrian-3ds",
+      "type": "3DS",
+      "title_id": "0004000000997E00",
+      "unique_id": "0x0997E",
+      "product_code": "CTR-P-OTYR",
+      "source": "https://github.com/nop90/Opentyrian-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00997E00"
+    },
+    {
+      "name": "Orchestrina",
+      "type": "3DS",
+      "title_id": "000400000F102000",
+      "unique_id": "0xF1020",
+      "product_code": "CTR-P-ORCH",
+      "source": "https://github.com/GlimmerDev/orchestrina",
+      "title_id_high": "00040000",
+      "title_id_low": "0F102000"
+    },
+    {
+      "name": "Paint3DS",
+      "type": "3DS",
+      "title_id": "000400000ABBA000",
+      "unique_id": "0xABBA0",
+      "product_code": "CTR-P-BPAI",
+      "source": "https://github.com/BlyZeDev/Paint3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0ABBA000"
+    },
+    {
+      "name": "PayloadSpinner3DS",
+      "type": "3DS",
+      "title_id": "000400000028A900",
+      "unique_id": "0x028A9",
+      "product_code": "CTR-F-SPIN",
+      "source": "https://github.com/SaturnSH2x2/PayloadSpinner3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0028A900"
+    },
+    {
+      "name": "pdrpse",
+      "type": "3DS",
+      "title_id": "000400000F885F00",
+      "unique_id": "0xF885F",
+      "product_code": "CTR-P-3PDR",
+      "source": "https://github.com/suloku/pdrpse",
+      "title_id_high": "00040000",
+      "title_id_low": "0F885F00"
+    },
+    {
+      "name": "PHBank",
+      "type": "3DS",
+      "title_id": "000400000F04ED00",
+      "unique_id": "0xF04ED",
+      "product_code": "CTR-P-KBKZ",
+      "source": "https://github.com/gocario/PHBank",
+      "title_id_high": "00040000",
+      "title_id_low": "0F04ED00"
+    },
+    {
+      "name": "pickr",
+      "type": "3DS",
+      "title_id": "0004000001CF0000",
+      "unique_id": "0x1CF00",
+      "product_code": "CTR-HB-PICK",
+      "source": "https://github.com/FlagBrew/Pickr",
+      "title_id_high": "00040000",
+      "title_id_low": "01CF0000"
+    },
+    {
+      "name": "picodrive",
+      "type": "3DS",
+      "title_id": "0004000000384C00",
+      "unique_id": "0x0384C",
+      "product_code": "CTR-P-PICO",
+      "source": "https://github.com/bubble2k16/picodrive_3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00384C00"
+    },
+    {
+      "name": "PKCount",
+      "type": "3DS",
+      "title_id": "0004000004330000",
+      "unique_id": "0x43300",
+      "product_code": "CTR-H-PKCT",
+      "source": "https://github.com/SuperSaiyajinStackZ/PKCount",
+      "title_id_high": "00040000",
+      "title_id_low": "04330000"
+    },
+    {
+      "name": "PKSM",
+      "type": "3DS",
+      "title_id": "000400000EC10000",
+      "unique_id": "0xEC100",
+      "product_code": "CTR-HB-PKSM",
+      "source": "https://github.com/FlagBrew/PKSM",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC10000"
+    },
+    {
+      "name": "Pocket-NLSE",
+      "type": "3DS",
+      "title_id": "000400000CCE2E00",
+      "unique_id": "0xCCE2E",
+      "product_code": "CTR-P-NLSE",
+      "source": "https://github.com/dragos240/Pocket-NLSE",
+      "title_id_high": "00040000",
+      "title_id_low": "0CCE2E00"
+    },
+    {
+      "name": "pomegranate",
+      "type": "3DS",
+      "title_id": "000400000BEAAA00",
+      "unique_id": "0xBEAAA",
+      "product_code": "CTR-P-PMGR",
+      "source": "https://github.com/sheepy0125/pomegranate",
+      "title_id_high": "00040000",
+      "title_id_low": "0BEAAA00"
+    },
+    {
+      "name": "Pong Pokemon",
+      "type": "3DS",
+      "title_id": "000400000E652700",
+      "unique_id": "0xE6527",
+      "product_code": "CTR-P-PKPO",
+      "source": "https://github.com/Sunrase/Pong-Pokemon-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0E652700"
+    },
+    {
+      "name": "POWDER-3DS",
+      "type": "3DS",
+      "title_id": "0004000000997B00",
+      "unique_id": "0x0997B",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/nop90/POWDER-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00997B00"
+    },
+    {
+      "name": "PrBoom+",
+      "type": "3DS",
+      "title_id": "0004000005A9BB00",
+      "unique_id": "0x5A9BB",
+      "product_code": "CTR-H-PRB2",
+      "source": "https://github.com/Voxel9/PrBoom-Plus-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "05A9BB00"
+    },
+    {
+      "name": "prboom3ds",
+      "type": "3DS",
+      "title_id": "000400000F003200",
+      "unique_id": "0xF0032",
+      "product_code": "PRBOOM",
+      "source": "https://github.com/elhobbs/prboom3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0F003200"
+    },
+    {
+      "name": "Quake2CTR",
+      "type": "3DS",
+      "title_id": "000400000FF12500",
+      "unique_id": "0xFF125",
+      "product_code": "CTR-P-QUAKE2",
+      "source": "https://github.com/masterfeizz/Quake2CTR",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF12500"
+    },
+    {
+      "name": "r3Ddragon",
+      "type": "3DS",
+      "title_id": "000400000FE7CB00",
+      "unique_id": "0xFE7CB",
+      "product_code": "CTR-P-R3DD",
+      "source": "https://github.com/mrdanielps/r3Ddragon",
+      "title_id_high": "00040000",
+      "title_id_low": "0FE7CB00"
+    },
+    {
+      "name": "Random Title Picker",
+      "type": "3DS",
+      "title_id": "000400000F0FF300",
+      "unique_id": "0xF0FF3",
+      "product_code": "CTR-P-VDCN",
+      "source": "https://github.com/einso/3ds-randomtitlepicker",
+      "title_id_high": "00040000",
+      "title_id_low": "0F0FF300"
+    },
+    {
+      "name": "RanGen-3DS",
+      "type": "3DS",
+      "title_id": "0004000004444400",
+      "unique_id": "0x44444",
+      "product_code": "CTR-RG3D",
+      "source": "https://github.com/ashbit06/RanGen-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "04444400"
+    },
+    {
+      "name": "raptor-consoles",
+      "type": "3DS",
+      "title_id": "000400000316A300",
+      "unique_id": "0x316A3",
+      "product_code": "CTR-RAP",
+      "source": "https://github.com/RetroGamer02/raptor-consoles",
+      "title_id_high": "00040000",
+      "title_id_low": "0316A300"
+    },
+    {
+      "name": "ravimid",
+      "type": "3DS",
+      "title_id": "000400000A55C100",
+      "unique_id": "0xA55C1",
+      "product_code": "CTR-N-RVMD",
+      "source": "https://github.com/Hoksy/ravimid",
+      "title_id_high": "00040000",
+      "title_id_low": "0A55C100"
+    },
+    {
+      "name": "red-viper",
+      "type": "3DS",
+      "title_id": "000400000FE7CB00",
+      "unique_id": "0xFE7CB",
+      "product_code": "CTR-P-R3DD",
+      "source": "https://github.com/skyfloogle/red-viper",
+      "title_id_high": "00040000",
+      "title_id_low": "0FE7CB00"
+    },
+    {
+      "name": "Rehid-Helper",
+      "type": "3DS",
+      "title_id": "0004000000DF1000",
+      "unique_id": "0x0DF10",
+      "product_code": "CTR-N-RHID",
+      "source": "https://github.com/hax0kartik/rehid",
+      "title_id_high": "00040000",
+      "title_id_low": "00DF1000"
+    },
+    {
+      "name": "RetroArch PCSX ReARMed",
+      "type": "3DS",
+      "title_id": "000400000BAC1500",
+      "unique_id": "0xBAC15",
+      "product_code": "RARCH-PCSXRARMD",
+      "source": "https://github.com/libretro/RetroArch",
+      "title_id_high": "00040000",
+      "title_id_low": "0BAC1500"
+    },
+    {
+      "name": "RetroArch-3DS",
+      "type": "3DS",
+      "title_id": "000400000BAC0000",
+      "unique_id": "0xBAC00",
+      "product_code": "RETROARCH-3DS",
+      "source": "https://github.com/libretro/RetroArch",
+      "title_id_high": "00040000",
+      "title_id_low": "0BAC0000"
+    },
+    {
+      "name": "RetroArch-3DS cores",
+      "type": "3DS",
+      "title_id": "000400000BAC??00",
+      "unique_id": "0xBAC??",
+      "product_code": "RARCH-??????",
+      "source": "https://github.com/libretro/RetroArch",
+      "title_id_high": "00040000",
+      "title_id_low": "0BAC??00"
+    },
+    {
+      "name": "RomFS Explorer",
+      "type": "3DS",
+      "title_id": "000400000A1B2C00",
+      "unique_id": "0xA1B2C",
+      "product_code": "CTR-HB-ROMF",
+      "source": "https://github.com/Ryuzaki-MrL/RomFS-Explorer",
+      "title_id_high": "00040000",
+      "title_id_low": "0A1B2C00"
+    },
+    {
+      "name": "RTChanger",
+      "type": "3DS",
+      "title_id": "0004000000FCCC00",
+      "unique_id": "0x0FCCC",
+      "product_code": "CTR-P-ARCA",
+      "source": "https://github.com/Storm-Eagle20/RTChanger",
+      "title_id_high": "00040000",
+      "title_id_low": "00FCCC00"
+    },
+    {
+      "name": "SaveSync",
+      "type": "3DS",
+      "title_id": "00040000049FE200",
+      "unique_id": "0x49FE2",
+      "product_code": "CTR-HB-SVSC",
+      "source": "https://github.com/coolguy1842/SaveSync",
+      "title_id_high": "00040000",
+      "title_id_low": "049FE200"
+    },
+    {
+      "name": "SavvyManager",
+      "type": "3DS",
+      "title_id": "0004000003697300",
+      "unique_id": "0x36973",
+      "product_code": "CTR-H-SAVY",
+      "source": "https://github.com/RocketRobz/SavvyManager",
+      "title_id_high": "00040000",
+      "title_id_low": "03697300"
+    },
+    {
+      "name": "screenshot-merge",
+      "type": "3DS",
+      "title_id": "000400000F0ACC00",
+      "unique_id": "0xF0ACC",
+      "product_code": "CTR-P-SCHM",
+      "source": "https://github.com/ihaveamac/screenshot-merge",
+      "title_id_high": "00040000",
+      "title_id_low": "0F0ACC00"
+    },
+    {
+      "name": "scummvm",
+      "type": "3DS",
+      "title_id": "000400000FF32100",
+      "unique_id": "0xFF321",
+      "product_code": "ScummVM",
+      "source": "https://github.com/scummvm/scummvm",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF32100"
+    },
+    {
+      "name": "SharedFontTool",
+      "type": "3DS",
+      "title_id": "000400000F000100",
+      "unique_id": "0xF0001",
+      "product_code": "CTR-P-ASFA",
+      "source": "https://github.com/dnasdw/SharedFontTool",
+      "title_id_high": "00040000",
+      "title_id_low": "0F000100"
+    },
+    {
+      "name": "SharedFontTool80",
+      "type": "3DS",
+      "title_id": "000400000F000200",
+      "unique_id": "0xF0002",
+      "product_code": "CTR-P-BSFA",
+      "source": "https://github.com/dnasdw/SharedFontTool",
+      "title_id_high": "00040000",
+      "title_id_low": "0F000200"
+    },
+    {
+      "name": "SliderPong",
+      "type": "3DS",
+      "title_id": "0004000000982400",
+      "unique_id": "0x09824",
+      "product_code": "CTR-SLDR-PG0",
+      "source": "https://github.com/CacahueteSansSel/SliderPong",
+      "title_id_high": "00040000",
+      "title_id_low": "00982400"
+    },
+    {
+      "name": "Smash Amiibo Cheat Tool",
+      "type": "3DS",
+      "title_id": "000400000A7FC800",
+      "unique_id": "0xA7FC8",
+      "product_code": "CTR-P-SAHT",
+      "source": "https://github.com/SUOlivia/Smash-Amiibo-Cheat-Tool",
+      "title_id_high": "00040000",
+      "title_id_low": "0A7FC800"
+    },
+    {
+      "name": "SmileBASIC File Manager",
+      "type": "3DS",
+      "title_id": "00040000005BF300",
+      "unique_id": "0x05BF3",
+      "product_code": "CTR-P-SBFM",
+      "source": "https://github.com/Trinitro21/lpp-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "005BF300"
+    },
+    {
+      "name": "Snake for 3DS",
+      "type": "3DS",
+      "title_id": "0004000004269000",
+      "unique_id": "0x42690",
+      "product_code": "CTR-P-SNAK",
+      "source": "https://github.com/Zachary-Rude/Snake-for-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "04269000"
+    },
+    {
+      "name": "Snake2DS",
+      "type": "3DS",
+      "title_id": "0004000000104300",
+      "unique_id": "0x01043",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/Jacudibu/Snake2DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00104300"
+    },
+    {
+      "name": "Snakes",
+      "type": "3DS",
+      "title_id": "0004000009034200",
+      "unique_id": "0x90342",
+      "product_code": "CTR-SNEK",
+      "source": "https://github.com/DDews/Snakes",
+      "title_id_high": "00040000",
+      "title_id_low": "09034200"
+    },
+    {
+      "name": "Snes9x",
+      "type": "3DS",
+      "title_id": "0004000000384900",
+      "unique_id": "0x03849",
+      "product_code": "CTR-P-SNSX",
+      "source": "https://github.com/matbo87/snes9x_3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00384900"
+    },
+    {
+      "name": "Sonic 1 Decomp",
+      "type": "3DS",
+      "title_id": "0004000000479B00",
+      "unique_id": "0x0479B",
+      "product_code": "CTR-P-STH1",
+      "source": "https://github.com/JeffRuLz/Sonic-1-2-2013-Decompilation",
+      "title_id_high": "00040000",
+      "title_id_low": "00479B00"
+    },
+    {
+      "name": "Sonic 2 Decomp",
+      "type": "3DS",
+      "title_id": "0004000000479C00",
+      "unique_id": "0x0479C",
+      "product_code": "CTR-P-STH2",
+      "source": "https://github.com/JeffRuLz/Sonic-1-2-2013-Decompilation",
+      "title_id_high": "00040000",
+      "title_id_low": "00479C00"
+    },
+    {
+      "name": "Sonic CD Decomp",
+      "type": "3DS",
+      "title_id": "0004000000308100",
+      "unique_id": "0x03081",
+      "product_code": "CTR-P-SNCD",
+      "source": "https://github.com/SaturnSH2x2/Sonic-CD-11-3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "00308100"
+    },
+    {
+      "name": "Sonic Mania Decomp",
+      "type": "3DS",
+      "title_id": "0004000000308200",
+      "unique_id": "0x03082",
+      "product_code": "CTR-P-SNMA",
+      "source": "https://github.com/SaturnSH2x2/RSDKv5-Decompilation",
+      "title_id_high": "00040000",
+      "title_id_low": "00308200"
+    },
+    {
+      "name": "Sonic Robo Blast 2",
+      "type": "3DS",
+      "title_id": "000400000F004200",
+      "unique_id": "0xF0042",
+      "product_code": "CTR-SRB2-3DS",
+      "source": "https://github.com/derrekr/srb2_3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0F004200"
+    },
+    {
+      "name": "SpecializeMii",
+      "type": "3DS",
+      "title_id": "000400000F3D9900",
+      "unique_id": "0xF3D99",
+      "product_code": "CTR-P-SMII",
+      "source": "https://github.com/phijor/SpecializeMii",
+      "title_id_high": "00040000",
+      "title_id_low": "0F3D9900"
+    },
+    {
+      "name": "SRAU",
+      "type": "3DS",
+      "title_id": "000400000EF10100",
+      "unique_id": "0xEF101",
+      "product_code": "CTR-EV-SRAU",
+      "source": "https://github.com/noirscape/SRAU",
+      "title_id_high": "00040000",
+      "title_id_low": "0EF10100"
+    },
+    {
+      "name": "StackMill",
+      "type": "3DS",
+      "title_id": "0004000004350900",
+      "unique_id": "0x43509",
+      "product_code": "CTR-H-SMIL",
+      "source": "https://github.com/SuperSaiyajinStackZ/StackMill",
+      "title_id_high": "00040000",
+      "title_id_low": "04350900"
+    },
+    {
+      "name": "StreamPotato",
+      "type": "3DS",
+      "title_id": "0004000000370000",
+      "unique_id": "0x03700",
+      "product_code": "CTR-P-STRPOTATO",
+      "source": "https://github.com/PainDe0Mie/PotatoStream",
+      "title_id_high": "00040000",
+      "title_id_low": "00370000"
+    },
+    {
+      "name": "StreaMu",
+      "type": "3DS",
+      "title_id": "000400000FF3D100",
+      "unique_id": "0xFF3D1",
+      "product_code": "CTR-H-STMU",
+      "source": "https://github.com/imissuuuu/StreaMu",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF3D100"
+    },
+    {
+      "name": "SuDokuL",
+      "type": "3DS",
+      "title_id": "000400000E394200",
+      "unique_id": "0xE3942",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/Mode8fx/SuDokuL",
+      "title_id_high": "00040000",
+      "title_id_low": "0E394200"
+    },
+    {
+      "name": "Super Photo Studio",
+      "type": "3DS",
+      "title_id": "0004000005250400",
+      "unique_id": "0x52504",
+      "product_code": "CTR-H-RPHO",
+      "source": "https://github.com/RocketRobz/SuperAllStarPhotoStudio",
+      "title_id_high": "00040000",
+      "title_id_low": "05250400"
+    },
+    {
+      "name": "Super-Haxagon",
+      "type": "3DS",
+      "title_id": "000400000099AA00",
+      "unique_id": "0x099AA",
+      "product_code": "CTR-P-HAXA",
+      "source": "https://github.com/RedTopper/Super-Haxagon",
+      "title_id_high": "00040000",
+      "title_id_low": "0099AA00"
+    },
+    {
+      "name": "SuperML",
+      "type": "3DS",
+      "title_id": "0004000003F9AD00",
+      "unique_id": "0x3F9AD",
+      "product_code": "SuperML",
+      "source": "https://github.com/CharlesAverill/SuperML",
+      "title_id_high": "00040000",
+      "title_id_low": "03F9AD00"
+    },
+    {
+      "name": "Supertux",
+      "type": "3DS",
+      "title_id": "0004000000998200",
+      "unique_id": "0x09982",
+      "product_code": "CTR-P-STUX",
+      "source": "https://github.com/nop90/Supertux-Milestone1-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00998200"
+    },
+    {
+      "name": "TemperPCE",
+      "type": "3DS",
+      "title_id": "0004000000384B00",
+      "unique_id": "0x0384B",
+      "product_code": "CTR-P-TPCE",
+      "source": "https://github.com/bubble2k16/temperpce_3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00384B00"
+    },
+    {
+      "name": "ThirdTube",
+      "type": "3DS",
+      "title_id": "000400000BF74D00",
+      "unique_id": "0xBF74D",
+      "product_code": "CTR-TYT",
+      "source": "https://github.com/windows-server-2003/ThirdTube",
+      "title_id_high": "00040000",
+      "title_id_low": "0BF74D00"
+    },
+    {
+      "name": "tikSweep",
+      "type": "3DS",
+      "title_id": "0004000000A8BF00",
+      "unique_id": "0x0A8BF",
+      "product_code": "CTR-K-TIKSWEEP",
+      "source": "https://github.com/DanTheMan827/tikSweep",
+      "title_id_high": "00040000",
+      "title_id_low": "00A8BF00"
+    },
+    {
+      "name": "TinyVNC",
+      "type": "3DS",
+      "title_id": "000400000C243300",
+      "unique_id": "0xC2433",
+      "product_code": "CTR-P-TVNC",
+      "source": "https://github.com/badda71/TinyVNC",
+      "title_id_high": "00040000",
+      "title_id_low": "0C243300"
+    },
+    {
+      "name": "TJAP_3DS",
+      "type": "3DS",
+      "title_id": "000400000B765500",
+      "unique_id": "0xB7655",
+      "product_code": "CTR-HB-TJAP",
+      "source": "https://github.com/LuMariGames/TJAP_3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0B765500"
+    },
+    {
+      "name": "topos",
+      "type": "3DS",
+      "title_id": "000400000EC2B300",
+      "unique_id": "0xEC2B3",
+      "product_code": "CTR-Vid",
+      "source": "https://github.com/mockmodular/topos_3ds-video-player",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC2B300"
+    },
+    {
+      "name": "Touch Keys",
+      "type": "3DS",
+      "title_id": "0004000000544B00",
+      "unique_id": "0x0544B",
+      "product_code": "CTR-HB-TKEY",
+      "source": "https://github.com/LuMariGames/Touch-Keys",
+      "title_id_high": "00040000",
+      "title_id_low": "00544B00"
+    },
+    {
+      "name": "TownManager",
+      "type": "3DS",
+      "title_id": "0004000001198300",
+      "unique_id": "0x11983",
+      "product_code": "CTR-P-TMGR",
+      "source": "https://github.com/dragos240/TownManager",
+      "title_id_high": "00040000",
+      "title_id_low": "01198300"
+    },
+    {
+      "name": "TRekt_3D",
+      "type": "3DS",
+      "title_id": "000400000FAC4C00",
+      "unique_id": "0xFAC4C",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/Manurocker95/TRekt_3D",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAC4C00"
+    },
+    {
+      "name": "TriCord",
+      "type": "3DS",
+      "title_id": "000400000D5C0D00",
+      "unique_id": "0xD5C0D",
+      "product_code": "CTR-N-TRCD",
+      "source": "https://github.com/2b-zipper/TriCord",
+      "title_id_high": "00040000",
+      "title_id_low": "0D5C0D00"
+    },
+    {
+      "name": "Trogdor-Reburninated",
+      "type": "3DS",
+      "title_id": "000400000CB52C00",
+      "unique_id": "0xCB52C",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/Mode8fx/Trogdor-Reburninated",
+      "title_id_high": "00040000",
+      "title_id_low": "0CB52C00"
+    },
+    {
+      "name": "TurtleInvaders",
+      "type": "3DS",
+      "title_id": "000400000F5ACD00",
+      "unique_id": "0xF5ACD",
+      "product_code": "CTR-P-CTAP",
+      "source": "https://github.com/TurtleP/TurtleInvaders",
+      "title_id_high": "00040000",
+      "title_id_low": "0F5ACD00"
+    },
+    {
+      "name": "TWiLight Menu++",
+      "type": "DSiware",
+      "title_id": "0004800453524C41",
+      "unique_id": null,
+      "product_code": "TWLMENUPP",
+      "source": "https://github.com/DS-Homebrew/TWiLightMenu",
+      "title_id_high": "00048004",
+      "title_id_low": "53524C41"
+    },
+    {
+      "name": "TWiLight Menu++ Updater",
+      "type": "3DS",
+      "title_id": "0004000004395500",
+      "unique_id": "0x43955",
+      "product_code": "CTR-H-SRLD",
+      "source": "https://github.com/RocketRobz/TWiLightMenu-Updater",
+      "title_id_high": "00040000",
+      "title_id_low": "04395500"
+    },
+    {
+      "name": "TWLSaveTool",
+      "type": "3DS",
+      "title_id": "000400000F0DEF00",
+      "unique_id": "0xF0DEF",
+      "product_code": "TWLSaveTool",
+      "source": "https://github.com/TuxSH/TWLSaveTool",
+      "title_id_high": "00040000",
+      "title_id_low": "0F0DEF00"
+    },
+    {
+      "name": "TWPatch",
+      "type": "3DS",
+      "title_id": "0004000001FF0C00",
+      "unique_id": "0x1FF0C",
+      "product_code": "CTR-P-ALSA",
+      "source": "https://gbatemp.net/threads/twpatcher-ds-i-mode-screen-filters-and-patches.542694/",
+      "title_id_high": "00040000",
+      "title_id_low": "01FF0C00"
+    },
+    {
+      "name": "uae3DS",
+      "type": "3DS",
+      "title_id": "0004000004964300",
+      "unique_id": "0x49643",
+      "product_code": "CTR-P-UAEM",
+      "source": "https://github.com/badda71/uae3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "04964300"
+    },
+    {
+      "name": "Universal-Edit",
+      "type": "3DS",
+      "title_id": "0004000004391500",
+      "unique_id": "0x43915",
+      "product_code": "CTR-H-UVED",
+      "source": "https://github.com/Universal-Team/Universal-Edit",
+      "title_id_high": "00040000",
+      "title_id_low": "04391500"
+    },
+    {
+      "name": "Universal-Updater",
+      "type": "3DS",
+      "title_id": "0004000004391700",
+      "unique_id": "0x43917",
+      "product_code": "CTR-H-UVUP",
+      "source": "https://github.com/Universal-Team/Universal-Updater",
+      "title_id_high": "00040000",
+      "title_id_low": "04391700"
+    },
+    {
+      "name": "UpdateSuppressor",
+      "type": "3DS",
+      "title_id": "0004000001F50400",
+      "unique_id": "0x1F504",
+      "product_code": "UpSup",
+      "source": "https://github.com/GiantBlargg/UpdateSuppressor",
+      "title_id_high": "00040000",
+      "title_id_low": "01F50400"
+    },
+    {
+      "name": "VConV",
+      "type": "3DS",
+      "title_id": "00040000011A8700",
+      "unique_id": "0x11A87",
+      "product_code": "CTR-H-VCON",
+      "source": "https://github.com/lxfly2000/VConV",
+      "title_id_high": "00040000",
+      "title_id_low": "011A8700"
+    },
+    {
+      "name": "vdeo player for 3DS",
+      "type": "3DS",
+      "title_id": "000400000EC60000",
+      "unique_id": "0xEC600",
+      "product_code": "CTR-Vid",
+      "source": "https://github.com/Core-2-Extreme/Video_player_for_3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC60000"
+    },
+    {
+      "name": "vice3DS",
+      "type": "3DS",
+      "title_id": "000400000FF4BA00",
+      "unique_id": "0xFF4BA",
+      "product_code": "CTR-P-VICE",
+      "source": "https://github.com/badda71/vice3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF4BA00"
+    },
+    {
+      "name": "VirtuaNES",
+      "type": "3DS",
+      "title_id": "0004000000384A00",
+      "unique_id": "0x0384A",
+      "product_code": "CTR-P-VNES",
+      "source": "https://github.com/bubble2k16/emus3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00384A00"
+    },
+    {
+      "name": "WifiManager",
+      "type": "3DS",
+      "title_id": "00040000005DC900",
+      "unique_id": "0x05DC9",
+      "product_code": "CTR-P-WIFI",
+      "source": "https://github.com/LiquidFenrir/WifiManager",
+      "title_id_high": "00040000",
+      "title_id_low": "005DC900"
+    },
+    {
+      "name": "WITB_3D",
+      "type": "3DS",
+      "title_id": "000400000FAC2C00",
+      "unique_id": "0xFAC2C",
+      "product_code": "CTR-P-PWDR",
+      "source": "https://github.com/Manurocker95/WITB_3D",
+      "title_id_high": "00040000",
+      "title_id_low": "0FAC2C00"
+    },
+    {
+      "name": "Wumiibo-helper",
+      "type": "3DS",
+      "title_id": "0004000000DF1100",
+      "unique_id": "0x0DF11",
+      "product_code": "CTR-N-WUMI",
+      "source": "https://github.com/hax0kartik/wumiibo",
+      "title_id_high": "00040000",
+      "title_id_low": "00DF1100"
+    },
+    {
+      "name": "Xash3DS",
+      "type": "3DS",
+      "title_id": "000400000FF12800",
+      "unique_id": "0xFF128",
+      "product_code": "CTR-P-HLIFE1",
+      "source": "https://github.com/masterfeizz/Xash3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF12800"
+    },
+    {
+      "name": "Xrick-3DS",
+      "type": "3DS",
+      "title_id": "0004000000997D00",
+      "unique_id": "0x0997D",
+      "product_code": "CTR-P-XRCK",
+      "source": "https://github.com/nop90/Xrick-3ds",
+      "title_id_high": "00040000",
+      "title_id_low": "00997D00"
+    },
+    {
+      "name": "Yahtzee3DS",
+      "type": "3DS",
+      "title_id": "0004000001473300",
+      "unique_id": "0x14733",
+      "product_code": "CTR-P-YTZE",
+      "source": "https://github.com/LiquidFenrir/Yahtzee3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "01473300"
+    },
+    {
+      "name": "YANBForwarder",
+      "type": "3DS",
+      "title_id": "000400000FF???00",
+      "unique_id": "0xFF400-0xFF7FF",
+      "product_code": "CTR-H-<gamecode>",
+      "source": "https://github.com/YANBForwarder/YANBF",
+      "title_id_high": "00040000",
+      "title_id_low": "0FF???00"
+    },
+    {
+      "name": "Yet Another Flappy Bird",
+      "type": "3DS",
+      "title_id": "000400000711AB00",
+      "unique_id": "0x711AB",
+      "product_code": "CTR-P-FLPY",
+      "source": "https://github.com/MillKeny/flappy",
+      "title_id_high": "00040000",
+      "title_id_low": "0711AB00"
+    },
+    {
+      "name": "Zappka3DS",
+      "type": "3DS",
+      "title_id": "000400000EC90000",
+      "unique_id": "0xEC900",
+      "product_code": "ZAPP3DS",
+      "source": "https://github.com/TehFridge/Zappka3DS",
+      "title_id_high": "00040000",
+      "title_id_low": "0EC90000"
+    },
+    {
+      "name": "Zelda3T",
+      "type": "3DS",
+      "title_id": "0004000000997400",
+      "unique_id": "0x09974",
+      "product_code": "CTR-P-ZE3T",
+      "source": "https://github.com/nop90/Zelda3T",
+      "title_id_high": "00040000",
+      "title_id_low": "00997400"
+    },
+    {
+      "name": "ZeldaOLB",
+      "type": "3DS",
+      "title_id": "0004000000997300",
+      "unique_id": "0x09973",
+      "product_code": "CTR-P-ZOLB",
+      "source": "https://github.com/nop90/ZeldaOLB",
+      "title_id_high": "00040000",
+      "title_id_low": "00997300"
+    },
+    {
+      "name": "ZeldaPicross",
+      "type": "3DS",
+      "title_id": "0004000000998100",
+      "unique_id": "0x09981",
+      "product_code": "CTR-P-ZPCR",
+      "source": "https://github.com/nop90/ZeldaPicross",
+      "title_id_high": "00040000",
+      "title_id_low": "00998100"
+    },
+    {
+      "name": "ZeldaROTH",
+      "type": "3DS",
+      "title_id": "0004000000997200",
+      "unique_id": "0x09972",
+      "product_code": "CTR-P-ROTH",
+      "source": "https://github.com/nop90/ZeldaROTH",
+      "title_id_high": "00040000",
+      "title_id_low": "00997200"
+    }
+  ]
+}

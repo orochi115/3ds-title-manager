@@ -231,7 +231,8 @@ class Snapshot:
     def rename_folder(self, index: int, name: str) -> None:
         self.launcher.rename_folder(index, name)
 
-    def _backup(self) -> Path:
+    def backup(self) -> Path:
+        """Copy the files a save would replace into ``backup-<timestamp>``."""
         stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
         dest = self.root / f'backup-{stamp}'
         dest.mkdir()
@@ -240,11 +241,15 @@ class Snapshot:
         shutil.copytree(self.extdata, dest / 'homemenu-extdata')
         return dest
 
-    def save(self) -> Path:
-        backup = self._backup()
+    def write(self) -> None:
+        """Write the in-memory layout. The caller decides whether to back up first."""
         self._write_savedata()
         (self.nand / 'Launcher.dat').write_bytes(self.launcher.blob)
         (self.nand / 'SEEDDB').write_bytes(self.seed_blob)
+
+    def save(self) -> Path:
+        backup = self.backup()
+        self.write()
         return backup
 
     def _write_stub_ticket(self, title_id: str) -> None:

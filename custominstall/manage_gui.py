@@ -18,7 +18,7 @@ import tkinter.filedialog as fd
 import tkinter.messagebox as mb
 import tkinter.simpledialog as simpledialog
 import tkinter.ttk as ttk
-from threading import Thread
+from threading import Event, Thread
 
 from .layout import TITLE_SLOTS, LayoutError, format_title_id
 from .snapshot import RemoveOptions, Snapshot
@@ -26,6 +26,8 @@ from .titles import (
     KIND_BY_HIGH,
     TitleManager,
     ghostland_name,
+    homebrew_name,
+    ique_dsiware_name,
     load_3dsdb_names,
     load_universal_names,
     system_title_name,
@@ -77,6 +79,7 @@ class ManagerApp(ttk.Frame):
         super().__init__(master)
         self.snap: Snapshot | None = None
         self.dirty = False
+        self._saving = False
         self.generation = 0
         self.view_folder = -1
         self.selected: tuple | None = None
@@ -175,6 +178,7 @@ class ManagerApp(ttk.Frame):
             ('Rename folder', self.rename_folder),
             ('Delete folder', self.delete_folder),
             ('Delete', self.delete_app),
+            ('Dump CIA', self.dump_cia),
         ):
             button = ttk.Button(actions, text=text, command=command)
             button.pack(side=tk.LEFT, padx=2, pady=2)
@@ -301,6 +305,8 @@ class ManagerApp(ttk.Frame):
                 ghostland_name(ghost, title_id)
                 or known.get(title_id)
                 or universal_name(universal, title_id)
+                or homebrew_name(title_id)
+                or ique_dsiware_name(title_id)
                 or system_title_name(title_id)
             )
 
@@ -660,6 +666,10 @@ class ManagerApp(ttk.Frame):
             return False
         return self.snap.savedata.find(int(text, 16)) is not None
 
+    def _dumpable(self, kind: str, ident) -> bool:
+        text = str(ident)
+        return kind in ('app', 'update', 'dlc') and len(text) == 16 and text[:8] in ('00040000', '0004000e', '0004008c')
+
     def _location(self) -> tuple[int, int] | None:
         if self.selected is None or self.snap is None:
             return None
@@ -836,6 +846,7 @@ class ManagerApp(ttk.Frame):
             'Rename folder': kind == 'folder',
             'Delete folder': kind == 'folder',
             'Delete': self._deletable(kind, ident),
+            'Dump CIA': self._dumpable(kind, ident),
         }
         for name, button in self.buttons.items():
             button.state(['!disabled'] if enabled.get(name) else ['disabled'])
@@ -901,30 +912,79 @@ class ManagerApp(ttk.Frame):
         self._draw()
         self._set_status(f'Sorted by {key} in memory. Save snapshot before importing.')
 
-    def save_snapshot(self) -> None:
-        if self.snap is None:
+    def save_snapshot(self, on_success=None) -> None:
+        if self.snap is None or self._saving:
             return
+        if not self.dirty:
+            self._set_status('Nothing to save.')
+            return
+        self._saving = True
         self._set_status('Saving the snapshot...')
 
         def work():
+            backup = None
             try:
-                backup = self.snap.save()
+                backup = self.snap.backup()
             except Exception as exc:
-                self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
+                if not self._ask_yesno('Backup failed', f'{exc}\n\nSave without a backup?'):
+                    self.after(0, lambda: self._save_finished(None, cancelled=True))
+                    return
+            try:
+                self.snap.write()
+            except Exception as exc:
+                self.after(0, lambda: self._save_finished(None, error=f'{type(exc).__name__}: {exc}'))
                 return
-            self.after(0, lambda: self._saved(backup))
+            self.after(0, lambda: self._save_finished(backup, on_success=on_success))
 
         Thread(target=work, daemon=True).start()
 
-    def _saved(self, backup) -> None:
+    def _ask_yesno(self, title: str, message: str) -> bool:
+        done = Event()
+        answer = {'value': False}
+
+        def ask():
+            answer['value'] = bool(mb.askyesno(title, message, parent=self))
+            done.set()
+
+        self.after(0, ask)
+        done.wait()
+        return answer['value']
+
+    def _save_finished(self, backup, *, cancelled: bool = False, error: str = '', on_success=None) -> None:
+        self._saving = False
+        if cancelled:
+            self._set_status('Save cancelled.')
+            return
+        if error:
+            self._set_status(error)
+            return
         self.dirty = False
-        self._set_status(f'Saved. Backup: {backup}. Import with GodMode9 before opening HOME Menu.')
+        where = str(backup) if backup else 'no backup'
+        self._set_status(f'Saved. Backup: {where}. Import with GodMode9 before opening HOME Menu.')
+        if on_success:
+            on_success()
+
+    def on_close(self) -> None:
+        if self._saving:
+            self._set_status('Wait for the save to finish.')
+            return
+        if self.dirty:
+            answer = mb.askyesnocancel('Unsaved changes', 'Save the snapshot before quitting?', parent=self)
+            if answer is None:
+                return
+            if answer:
+                self.save_snapshot(on_success=self.winfo_toplevel().destroy)
+                return
+        self.winfo_toplevel().destroy()
 
     def add_cia(self) -> None:
         if self.snap is None or not self._paths()['SD root']:
             self._set_status('Refresh a snapshot and set the SD root before adding a CIA.')
             return
-        paths = fd.askopenfilenames(parent=self, title='CIA files', filetypes=[('CIA', '*.cia'), ('All', '*.*')])
+        paths = fd.askopenfilenames(
+            parent=self, title='CIA or archive',
+            filetypes=[('CIA or archive', '*.cia *.zip *.7z *.rar'), ('All files', '*.*')],
+        )
         if not paths:
             return
         if not mb.askyesno('Add CIA', 'Install onto the SD card now and record tickets in the snapshot?'):
@@ -933,7 +993,9 @@ class ManagerApp(ttk.Frame):
 
         def work():
             try:
-                installed = self.snap.add_cias(list(paths), seeddb=seeddb)
+                from .archives import ExtractedCias
+                with ExtractedCias(list(paths)) as cia_paths:
+                    installed = self.snap.add_cias(cia_paths, seeddb=seeddb)
             except Exception as exc:
                 self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
                 return
@@ -945,6 +1007,30 @@ class ManagerApp(ttk.Frame):
         self.dirty = True
         self._draw()
         self._set_status(f'Installed {", ".join(installed)}. Save snapshot, then import before HOME Menu.')
+
+    def dump_cia(self) -> None:
+        if self.snap is None or not self.snap.sd or not self.selected or not self._dumpable(*self.selected):
+            self._set_status('Only an SD application, update, or DLC can be exported.')
+            return
+        title_id = self.selected[1]
+        folder = fd.askdirectory(parent=self, title='Folder for the decrypted CIA')
+        if not folder:
+            return
+        dest = os.path.join(folder, f'{title_id}.cia')
+        self._set_status(f'Exporting {title_id}...')
+
+        def work():
+            try:
+                from .cia_export import export_cia
+                export_cia(self.snap.sd, str(self.snap.movable), str(self.snap.boot9), title_id, dest, seeddb_path() or None)
+            except Exception as exc:
+                self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
+                return
+            self.after(0, lambda: self._set_status(
+                f'Wrote {dest}. The CIA is decrypted. NCCH encryption remains, and a seed title still needs seeddb.'
+            ))
+
+        Thread(target=work, daemon=True).start()
 
     def delete_app(self) -> None:
         if self.snap is None or not self.selected or not self._deletable(*self.selected):
@@ -1128,7 +1214,9 @@ def main() -> None:
     window = tk.Tk()
     window.title('custom-install title manager')
     window.geometry('1100x720')
-    ManagerApp(window).pack(fill=tk.BOTH, expand=True)
+    app = ManagerApp(window)
+    app.pack(fill=tk.BOTH, expand=True)
+    window.protocol('WM_DELETE_WINDOW', app.on_close)
     window.mainloop()
 
 

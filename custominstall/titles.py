@@ -152,6 +152,41 @@ def theme_dlc_name(title_id: str) -> str:
     return f'Home Menu Themes ({region}) #{variation}'
 
 
+def _name_map(filename: str, id_field: str, label) -> dict[str, str]:
+    cached = getattr(_name_map, 'cache', {})
+    if filename in cached:
+        return cached[filename]
+    path = Path(__file__).resolve().parent / 'data' / filename
+    names: dict[str, str] = {}
+    try:
+        payload = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        payload = {}
+    for row in payload.get('titles', []):
+        title_id = str(row.get(id_field, '')).lower()
+        value = label(row).strip()
+        if len(title_id) == 16 and value:
+            names[title_id] = value
+    cached[filename] = names
+    _name_map.cache = cached
+    return names
+
+
+def homebrew_name(title_id: str) -> str:
+    """Name from the Hacks Guide homebrew title list, when that file is present."""
+    names = _name_map('hacksguide-homebrew-titles.json', 'title_id', lambda row: str(row.get('name') or ''))
+    return names.get(title_id.lower(), '')
+
+
+def ique_dsiware_name(title_id: str) -> str:
+    """Chinese name of an iQue DSiWare title installed on a 3DS (high 00048004)."""
+    names = _name_map(
+        'ique-dsiware.json', 'ctr_title_id',
+        lambda row: str(row.get('name_zh') or row.get('name_en') or ''),
+    )
+    return names.get(title_id.lower(), '')
+
+
 def system_title_name(title_id: str) -> str:
     text = title_id.lower()
     found = _system_title_names().get(text)

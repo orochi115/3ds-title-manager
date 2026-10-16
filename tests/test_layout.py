@@ -133,6 +133,10 @@ class NameDbTests(unittest.TestCase):
         self.assertEqual(system_title_name('0004008c00008206'), 'Home Menu Themes (JPN) #6')
         self.assertEqual(system_title_name('0004008c00008f00'), 'Home Menu Themes (USA) #0')
         self.assertEqual(system_title_name('0004008c00008207'), '')
+        from custominstall.titles import homebrew_name, ique_dsiware_name
+        self.assertEqual(homebrew_name('0004000000384a00'), 'VirtuaNES')
+        self.assertEqual(ique_dsiware_name('000480044b555743'), '照照瓦力欧制造')
+        self.assertEqual(ique_dsiware_name('0004000000384a00'), '')
         with tempfile.TemporaryDirectory() as temp:
             Path(temp, 'list_JP.json').write_text(
                 '[{"TitleID": "000480044B513945", "Name": "Example DSiWare"}]', encoding='utf-8')
@@ -197,6 +201,58 @@ class RemoveFilesTests(unittest.TestCase):
         text = format_title_id(0x0004000012345678)
         self.assertEqual('0004000e' + text[8:], '0004000e12345678')
         self.assertEqual('0004008c' + text[8:], '0004008c12345678')
+
+
+class ArchiveTests(unittest.TestCase):
+    def test_a_zip_named_7z_yields_the_cia_inside(self):
+        import tempfile
+        import zipfile
+        from pathlib import Path
+        from custominstall.archives import ExtractedCias, is_archive
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cia = root / 'payload.bin'
+            cia.write_bytes(b'\x20\x20\x00\x00' + b'\x00' * 0x2040)
+            archive = root / 'misnamed.7z'
+            with zipfile.ZipFile(archive, 'w') as package:
+                package.write(cia, 'game.bin')
+            self.assertTrue(is_archive(archive))
+            with ExtractedCias([str(archive)]) as found:
+                self.assertEqual(len(found), 1)
+                self.assertTrue(found[0].endswith('game.bin'))
+                self.assertEqual(Path(found[0]).read_bytes()[:4], b'\x20\x20\x00\x00')
+
+
+class CiaExportTests(unittest.TestCase):
+    def test_decrypted_cia_drops_missing_contents_and_the_encrypted_flag(self):
+        import io
+        import tempfile
+        from hashlib import sha256
+        from pathlib import Path
+        from pyctr.type.tmd import ContentChunkRecord, ContentInfoRecord, ContentTypeFlags, TitleMetadataReader, TitleVersion
+        from custominstall.cia_export import _read_tmd, write_decrypted_cia
+
+        def chunk(index: int, encrypted: bool) -> ContentChunkRecord:
+            return ContentChunkRecord(f'{index:08x}', index, ContentTypeFlags(encrypted, False, False, False, False), 4, b'\0' * 32)
+
+        records = [chunk(0, True), chunk(1, True)]
+        info = ContentInfoRecord(0, 2, sha256(b''.join(bytes(record) for record in records)).digest())
+        tmd = TitleMetadataReader(
+            title_id='0004000000000001', save_size=0, srl_save_size=0,
+            title_version=TitleVersion.from_int(0), info_records=[info], chunk_records=records,
+        )
+        body = b'NCCH-plain'
+        with tempfile.TemporaryDirectory() as temp:
+            dest = Path(temp) / 'out.cia'
+            write_decrypted_cia(tmd, [(records[0], lambda: io.BytesIO(body))], dest)
+            written = _read_tmd(dest)
+            self.assertEqual(written.title_id, '0004000000000001')
+            self.assertEqual(len(written.chunk_records), 1)
+            self.assertFalse(written.chunk_records[0].type.encrypted)
+            self.assertEqual(written.chunk_records[0].hash, sha256(body).digest())
+            blob = dest.read_bytes()
+            self.assertEqual(blob[-len(body):], body)
 
 
 class SeedTests(unittest.TestCase):

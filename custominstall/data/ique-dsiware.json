@@ -1,0 +1,523 @@
+{
+  "description": "Known iQue (China) DSiWare: the 19 titles on the DSiBrew China table, plus 13 later titles identified by No-Intro product codes. Title IDs for the later 13 are derived from the four-letter code.",
+  "notes": [
+    "dsi_title_id uses title-id high 00030004, the DSi DSiWare category.",
+    "ctr_title_id uses title-id high 00048004, the same title as installed on a 3DS.",
+    "title_id_low is the ASCII of the four-letter product code.",
+    "The first 19 titles come from the DSiBrew China table, which ends at Game & Watch: Manhole.",
+    "The last 13 titles are in the No-Intro Nintendo DSi dat as China / iQue. Their title IDs are computed from the product code. Prices are left null. Some Chinese names are shop-period names; Chef, Flagman, Zhiyong Shuangquan, and the Mario calculator name are matched from the English or pinyin title.",
+    "Count is 32 known titles, including preinstalled Nintendogs (KDOC). This is not an official iQue catalog total."
+  ],
+  "count": 32,
+  "titles": [
+    {
+      "type": "Game",
+      "code": "KDOC",
+      "title_id_low": "4B444F43",
+      "dsi_title_id": "000300044B444F43",
+      "ctr_title_id": "000480044B444F43",
+      "product_code": "TWL-N-KDOC",
+      "name_zh": "任天狗狗",
+      "name_en": "Nintendogs",
+      "price": "Bundled with every iQue DSi",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KAMC",
+      "title_id_low": "4B414D43",
+      "dsi_title_id": "000300044B414D43",
+      "ctr_title_id": "000480044B414D43",
+      "product_code": "TWL-N-KAMC",
+      "name_zh": "纸飞机挑战",
+      "name_en": "Paper Airplane Chase",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KP6C",
+      "title_id_low": "4B503643",
+      "dsi_title_id": "000300044B503643",
+      "ctr_title_id": "000480044B503643",
+      "product_code": "TWL-N-KP6C",
+      "name_zh": "鸟和豆",
+      "name_en": "Bird and Beans",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KWDC",
+      "title_id_low": "4B574443",
+      "dsi_title_id": "000300044B574443",
+      "ctr_title_id": "000480044B574443",
+      "product_code": "TWL-N-KWDC",
+      "name_zh": "iQue DSi时钟 相架款",
+      "name_en": "Photo Clock",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KWCC",
+      "title_id_low": "4B574343",
+      "dsi_title_id": "000300044B574343",
+      "ctr_title_id": "000480044B574343",
+      "product_code": "TWL-N-KWCC",
+      "name_zh": "iQue DSi时钟 动物森林款",
+      "name_en": "Animal Crossing Clock",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KWBC",
+      "title_id_low": "4B574243",
+      "dsi_title_id": "000300044B574243",
+      "ctr_title_id": "000480044B574243",
+      "product_code": "TWL-N-KWBC",
+      "name_zh": "iQue DSi时钟 红白机马力欧款",
+      "name_en": "Mario Clock",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KWGC",
+      "title_id_low": "4B574743",
+      "dsi_title_id": "000300044B574743",
+      "ctr_title_id": "000480044B574743",
+      "product_code": "TWL-N-KWGC",
+      "name_zh": "iQue DSi计算器 动物森林款",
+      "name_en": "Animal Crossing Calculator",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KUWC",
+      "title_id_low": "4B555743",
+      "dsi_title_id": "000300044B555743",
+      "ctr_title_id": "000480044B555743",
+      "product_code": "TWL-N-KUWC",
+      "name_zh": "照照瓦力欧制造",
+      "name_en": "WarioWare: Snapped!",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KD9C",
+      "title_id_low": "4B443943",
+      "dsi_title_id": "000300044B443943",
+      "ctr_title_id": "000480044B443943",
+      "product_code": "TWL-N-KD9C",
+      "name_zh": "一下下马力欧医生",
+      "name_en": "Dr. Mario Express",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KHDC",
+      "title_id_low": "4B484443",
+      "dsi_title_id": "000300044B484443",
+      "ctr_title_id": "000480044B484443",
+      "product_code": "TWL-N-KHDC",
+      "name_zh": "趣拍拍☆炫靓俏饰秀",
+      "name_en": "Sparkle Snapshots",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KSLC",
+      "title_id_low": "4B534C43",
+      "dsi_title_id": "000300044B534C43",
+      "ctr_title_id": "000480044B534C43",
+      "product_code": "TWL-N-KSLC",
+      "name_zh": "纸牌DSi",
+      "name_en": "Touch Solitare",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "K59C",
+      "title_id_low": "4B353943",
+      "dsi_title_id": "000300044B353943",
+      "ctr_title_id": "000480044B353943",
+      "product_code": "TWL-N-K59C",
+      "name_zh": "啊啊无情刹那",
+      "name_en": "Metal Torrent",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KGBC",
+      "title_id_low": "4B474243",
+      "dsi_title_id": "000300044B474243",
+      "ctr_title_id": "000480044B474243",
+      "product_code": "TWL-N-KGBC",
+      "name_zh": "GAME & WATCH 抛接球",
+      "name_en": "Game & Watch Ball",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KGHC",
+      "title_id_low": "4B474843",
+      "dsi_title_id": "000300044B474843",
+      "ctr_title_id": "000480044B474843",
+      "product_code": "TWL-N-KGHC",
+      "name_zh": "GAME&WATCH 安全帽",
+      "name_en": "Game & Watch Helmet",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KGDC",
+      "title_id_low": "4B474443",
+      "dsi_title_id": "000300044B474443",
+      "ctr_title_id": "000480044B474443",
+      "product_code": "TWL-N-KGDC",
+      "name_zh": "GAME & WATCH 森乐刚",
+      "name_en": "Game & Watch Donkey Kong",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KTBC",
+      "title_id_low": "4B544243",
+      "dsi_title_id": "000300044B544243",
+      "ctr_title_id": "000480044B544243",
+      "product_code": "TWL-N-KTBC",
+      "name_zh": "一下下名游大全 经典重温",
+      "name_en": "Clubhouse Games Express: Strategy Pack",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KTPC",
+      "title_id_low": "4B545043",
+      "dsi_title_id": "000300044B545043",
+      "ctr_title_id": "000480044B545043",
+      "product_code": "TWL-N-KTPC",
+      "name_zh": "一下下名游大全 轻松休闲",
+      "name_en": "Clubhouse Games Express: Family Favorites",
+      "price": "500 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KGJC",
+      "title_id_low": "4B474A43",
+      "dsi_title_id": "000300044B474A43",
+      "ctr_title_id": "000480044B474A43",
+      "product_code": "TWL-N-KGJC",
+      "name_zh": "GAME & WATCH 审判",
+      "name_en": "Game & Watch: Judge",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Game",
+      "code": "KGMC",
+      "title_id_low": "4B474D43",
+      "dsi_title_id": "000300044B474D43",
+      "ctr_title_id": "000480044B474D43",
+      "product_code": "TWL-N-KGMC",
+      "name_zh": "GAME & WATCH 人孔",
+      "name_en": "Game & Watch: Manhole",
+      "price": "200 iQue Points",
+      "region": "CHN",
+      "sources": [
+        "dsibrew"
+      ]
+    },
+    {
+      "type": "Application",
+      "code": "KWFC",
+      "title_id_low": "4B574643",
+      "dsi_title_id": "000300044B574643",
+      "ctr_title_id": "000480044B574643",
+      "product_code": "TWL-N-KWFC",
+      "name_zh": "马力欧计算器",
+      "name_en": "Mario Calculator",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "商店全称未逐条核对，按同系列时钟命名习惯对应红白机马力欧款计算器。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KGCC",
+      "title_id_low": "4B474343",
+      "dsi_title_id": "000300044B474343",
+      "ctr_title_id": "000480044B474343",
+      "product_code": "TWL-N-KGCC",
+      "name_zh": "GAME & WATCH 厨师",
+      "name_en": "Game & Watch: Chef",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名由英文 Chef 对应，未见与 DSiBrew 同级的逐条店名摘录。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KGGC",
+      "title_id_low": "4B474743",
+      "dsi_title_id": "000300044B474743",
+      "ctr_title_id": "000480044B474743",
+      "product_code": "TWL-N-KGGC",
+      "name_zh": "GAME & WATCH 旗手",
+      "name_en": "Game & Watch: Flagman",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名由英文 Flagman 对应，未见与 DSiBrew 同级的逐条店名摘录。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KGFC",
+      "title_id_low": "4B474643",
+      "dsi_title_id": "000300044B474643",
+      "ctr_title_id": "000480044B474643",
+      "product_code": "TWL-N-KGFC",
+      "name_zh": "GAME & WATCH 马力欧的水泥工场",
+      "name_en": "Game & Watch: Mario's Cement Factory",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KGVC",
+      "title_id_low": "4B475643",
+      "dsi_title_id": "000300044B475643",
+      "ctr_title_id": "000480044B475643",
+      "product_code": "TWL-N-KGVC",
+      "name_zh": "GAME & WATCH 害兽",
+      "name_en": "Game & Watch: Vermin",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KTRC",
+      "title_id_low": "4B545243",
+      "dsi_title_id": "000300044B545243",
+      "ctr_title_id": "000480044B545243",
+      "product_code": "TWL-N-KTRC",
+      "name_zh": "一下下名游大全 智勇双全",
+      "name_en": "Clubhouse Games Express: Card Classics",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名由 No-Intro 罗马字 Zhiyong Shuangquan 对应。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KNRC",
+      "title_id_low": "4B4E5243",
+      "dsi_title_id": "000300044B4E5243",
+      "ctr_title_id": "000480044B4E5243",
+      "product_code": "TWL-N-KNRC",
+      "name_zh": "一下下脑年龄 DSi 锻炼 算数篇",
+      "name_en": "Brain Age Express: Math",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KSEC",
+      "title_id_low": "4B534543",
+      "dsi_title_id": "000300044B534543",
+      "ctr_title_id": "000480044B534543",
+      "product_code": "TWL-N-KSEC",
+      "name_zh": "跟着节奏锻炼 满当当英语 简单会话篇",
+      "name_en": "New English Training: Learning with Tempo - Beginners Edition",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KJEC",
+      "title_id_low": "4B4A4543",
+      "dsi_title_id": "000300044B4A4543",
+      "ctr_title_id": "000480044B4A4543",
+      "product_code": "TWL-N-KJEC",
+      "name_zh": "跟着节奏锻炼 满当当英语 原味会话篇",
+      "name_en": "New English Training: Learning with Tempo - Advanced Edition",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KSPC",
+      "title_id_low": "4B535043",
+      "dsi_title_id": "000300044B535043",
+      "ctr_title_id": "000480044B535043",
+      "product_code": "TWL-N-KSPC",
+      "name_zh": "瞄瞄～中中！",
+      "name_en": "Spotto!",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KSUC",
+      "title_id_low": "4B535543",
+      "dsi_title_id": "000300044B535543",
+      "ctr_title_id": "000480044B535543",
+      "product_code": "TWL-N-KSUC",
+      "name_zh": "数阵对战",
+      "name_en": "Shu Zhen Duizhan",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表；No-Intro 仅有拼音。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "K2LC",
+      "title_id_low": "4B324C43",
+      "dsi_title_id": "000300044B324C43",
+      "ctr_title_id": "000480044B324C43",
+      "product_code": "TWL-N-K2LC",
+      "name_zh": "早教乐园 我的童话故事绘本 小海兔的故事",
+      "name_en": "Zaojiao Leyuan wo de Tonghua Huiben: Xiaohaitu de Gushi",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    },
+    {
+      "type": "Game",
+      "code": "KRGC",
+      "title_id_low": "4B524743",
+      "dsi_title_id": "000300044B524743",
+      "ctr_title_id": "000480044B524743",
+      "product_code": "TWL-N-KRGC",
+      "name_zh": "立体隐藏画 童话寻踪记",
+      "name_en": "Liti Yincanghua: Tonghua Xun Zong Ji",
+      "price": null,
+      "region": "CHN",
+      "sources": [
+        "no-intro"
+      ],
+      "notes": "中文名见于创软商店时期的中文软件列表。 title_id_low 由产品码 ASCII 换算，未从 eShop 目录抓到。"
+    }
+  ],
+  "sources": [
+    {
+      "name": "DSiBrew",
+      "page": "Title_database",
+      "url": "https://dsibrew.org/wiki/Title_database",
+      "section": "00030004 (DSiWare) / China",
+      "retrieved": "2026-10-16"
+    },
+    {
+      "name": "No-Intro",
+      "page": "Nintendo - Nintendo DSi",
+      "url": "https://github.com/libretro/libretro-database/blob/master/metadat/no-intro/Nintendo%20-%20Nintendo%20DSi.dat",
+      "section": "region China, serial ending in C",
+      "retrieved": "2026-10-16"
+    }
+  ]
+}
