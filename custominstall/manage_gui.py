@@ -22,13 +22,28 @@ from threading import Thread
 
 from .layout import TITLE_SLOTS, LayoutError, format_title_id
 from .snapshot import RemoveOptions, Snapshot
-from .titles import KIND_BY_HIGH, TitleManager, load_3dsdb_names, system_title_name
+from .titles import (
+    KIND_BY_HIGH,
+    TitleManager,
+    ghostland_name,
+    load_3dsdb_names,
+    load_universal_names,
+    system_title_name,
+    universal_name,
+)
 
 CELL = 68
 
 
 def _env(name: str) -> str:
     return os.environ.get(name, '')
+
+
+def _existing_dir(*candidates: str | None) -> str:
+    for candidate in candidates:
+        if candidate and os.path.isdir(candidate):
+            return candidate
+    return ''
 
 
 def _rgb_photo(array) -> tk.PhotoImage:
@@ -219,7 +234,7 @@ class ManagerApp(ttk.Frame):
     def _apply_meta(self, generation: int, title_id: str, name: str, icon, extdata_id: str | None) -> None:
         if generation != self.generation or self.snap is None:
             return
-        if name:
+        if name and not self.snap._names.get(title_id):
             self.snap._names[title_id] = name
             if self.tree.exists(f't-{title_id}'):
                 values = list(self.tree.item(f't-{title_id}', 'values'))
@@ -240,18 +255,38 @@ class ManagerApp(ttk.Frame):
         self._set_status(error or 'Names and icons are loaded. Save snapshot writes the export.')
 
     def _fill_names_from_db(self) -> None:
-        directory = os.environ.get('CUSTOMINSTALL_3DSDB') or r'D:\LLM_Work\CustomInstall\3dsdb\jsons'
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        directory = _existing_dir(
+            os.environ.get('CUSTOMINSTALL_3DSDB'),
+            os.path.join(root, 'third_party', '3dsdb', 'jsons'),
+            r'D:\LLM_Work\CustomInstall\3dsdb\jsons',
+        )
+        ghost = _existing_dir(
+            os.environ.get('CUSTOMINSTALL_3DSDB2'),
+            os.path.join(root, 'third_party', '3dsdb-ghostland'),
+            r'D:\LLM_Work\CustomInstall\3dsdb2',
+        )
+        universal_root = _existing_dir(
+            os.environ.get('CUSTOMINSTALL_3DSDB3'),
+            os.path.join(root, 'third_party', 'universal-db'),
+            r'D:\LLM_Work\CustomInstall\3dsdb3',
+        )
         try:
             known = load_3dsdb_names(directory)
         except OSError:
             known = {}
-        for title_id in [row.title_id for row in self.snap.list_titles(read_names=False)]:
-            if not self.snap._names.get(title_id):
-                self.snap._names[title_id] = known.get(title_id) or system_title_name(title_id)
-        for entry in self.snap.launcher.entries():
-            title_id = format_title_id(entry.title_id)
-            if not self.snap._names.get(title_id):
-                self.snap._names[title_id] = known.get(title_id) or system_title_name(title_id)
+        universal = load_universal_names(universal_root)
+        pending = [row.title_id for row in self.snap.list_titles(read_names=False)]
+        pending.extend(format_title_id(entry.title_id) for entry in self.snap.launcher.entries())
+        for title_id in pending:
+            if self.snap._names.get(title_id):
+                continue
+            self.snap._names[title_id] = (
+                ghostland_name(ghost, title_id)
+                or known.get(title_id)
+                or universal_name(universal, title_id)
+                or system_title_name(title_id)
+            )
 
     def _all_rows(self) -> list[tuple]:
         """Every SD title, NAND title, and folder from the open snapshot."""
@@ -455,6 +490,8 @@ class ManagerApp(ttk.Frame):
         self._dragging = False
         self._ghost = None
         self._drop_mark = None
+        self._selection_before_press = self.selected
+        self._tree_before_press = self.tree.selection()
         self._select_cell(self._press_slot)
 
     def _on_motion(self, event) -> None:
@@ -514,10 +551,17 @@ class ManagerApp(ttk.Frame):
         slot = self._slot_at(event)
         cell = self.cells.get(slot) if slot is not None else None
         if cell and cell[0] == 'folder':
-            # The second click of a double-click also releases. Ignore that release
-            # so it does not act on the folder that was just opened.
+            # Opening a folder should not select that folder in the list.
             self._press_slot = None
+            self.selected = getattr(self, '_selection_before_press', None)
+            previous = getattr(self, '_tree_before_press', ())
+            self._ignore_tree = True
+            self.tree.selection_remove(self.tree.selection())
+            if previous and self.tree.exists(previous[0]):
+                self.tree.selection_set(previous)
+            self._ignore_tree = False
             self.show_folder(cell[1])
+            self._draw_detail()
 
     def _on_tree(self, _event) -> None:
         if self._ignore_tree or self.snap is None:
@@ -536,16 +580,50 @@ class ManagerApp(ttk.Frame):
             self.selected = (kind, title_id)
         else:
             return
+        place = self._location()
+        if place is not None:
+            folder, _slot = place
+            self.view_folder = -1 if folder in (None, -1) else folder
         self._draw_grid()
+        if place is not None and place[1] in self.cells:
+            self._scroll_to_slot(place[1])
         self._draw_detail()
 
     def _on_tree_double(self, _event) -> None:
         self.open_selected_folder()
 
     def show_folder(self, index: int) -> None:
+        """Change the grid screen without changing the list selection."""
         self.view_folder = index
-        self._draw()
+        self._draw_grid()
         self.canvas.xview_moveto(0)
+
+    def _location(self) -> tuple[int, int] | None:
+        if self.selected is None or self.snap is None:
+            return None
+        kind, ident = self.selected
+        if kind == 'card':
+            slot = self.snap.launcher.cart_slot()
+            return None if slot is None else (-1, slot)
+        if kind == 'folder':
+            for folder in self.snap.folders():
+                if folder.index == ident:
+                    return -1, folder.position
+            return None
+        title_id = int(ident, 16)
+        entry = self.snap.savedata.find(title_id) or self.snap.launcher.find(title_id)
+        if entry is None or entry.slot < 0:
+            return None
+        return entry.folder, entry.slot
+
+    def _scroll_to_slot(self, slot: int) -> None:
+        rows = self.grid_rows or 1
+        column = slot // rows
+        region = self.canvas.cget('scrollregion').split()
+        total = float(region[2]) if len(region) >= 3 else 0
+        if total <= 0:
+            return
+        self.canvas.xview_moveto(max(0.0, (column * CELL) / total))
 
     def open_selected_folder(self) -> None:
         if self.selected and self.selected[0] == 'folder':

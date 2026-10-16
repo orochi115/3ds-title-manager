@@ -128,13 +128,20 @@ class NameDbTests(unittest.TestCase):
         from pathlib import Path
         from custominstall.titles import load_3dsdb_names, system_title_name
         self.assertEqual(system_title_name('0004001000020000'), 'System Settings')
-        self.assertEqual(system_title_name('0004001020020300'), 'Health and Safety')
+        self.assertEqual(system_title_name('0004001020020300'), 'Health and Safety Information (N3DS)')
         self.assertEqual(system_title_name('0004000000123400'), '')
         with tempfile.TemporaryDirectory() as temp:
             Path(temp, 'list_JP.json').write_text(
                 '[{"TitleID": "000480044B513945", "Name": "Example DSiWare"}]', encoding='utf-8')
             names = load_3dsdb_names(temp)
         self.assertEqual(names['000480044b513945'], 'Example DSiWare')
+        from custominstall.titles import ghostland_name, universal_name
+        with tempfile.TemporaryDirectory() as temp:
+            meta = Path(temp) / 'db' / '3ds' / 'base' / '0004000000051600'
+            meta.mkdir(parents=True)
+            (meta / 'meta.json').write_text('{"name": "いつの間に交換日記"}', encoding='utf-8')
+            self.assertEqual(ghostland_name(temp, '0004000000051600'), 'いつの間に交換日記')
+        self.assertEqual(universal_name({'00306': 'CTR-AMKJ - Mario Kart 7'}, '0004000000030600'), 'Mario Kart 7')
 
 
 class RemoveFilesTests(unittest.TestCase):

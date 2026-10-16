@@ -87,11 +87,91 @@ _SYSTEM_BY_LOW = {
 }
 
 
+def _smdh_with_blank_magic(exefs):
+    """Some homebrew writes a full SMDH whose first four bytes are zero."""
+    import io
+    from pyctr.type.smdh import SMDH
+    try:
+        with exefs.open('icon') as handle:
+            raw = bytearray(handle.read())
+    except Exception:
+        return None
+    if len(raw) < 0x36C0 or raw[0:4] == b'SMDH':
+        return None
+    raw[0:4] = b'SMDH'
+    try:
+        return SMDH.load(io.BytesIO(raw))
+    except Exception:
+        return None
+
+
+def _system_title_names() -> dict[str, str]:
+    cached = getattr(_system_title_names, 'cache', None)
+    if cached is not None:
+        return cached
+    path = Path(__file__).resolve().parent / 'data' / '3ds-system-titles.json'
+    names: dict[str, str] = {}
+    try:
+        payload = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        payload = {}
+    for row in payload.get('titles', []):
+        title_id = str(row.get('title_id', '')).lower()
+        label = ''
+        stored = row.get('names')
+        if isinstance(stored, dict):
+            label = str(stored.get('azahar') or stored.get('3dbrew') or '').strip()
+        label = label or str(row.get('name') or '').strip()
+        if len(title_id) == 16 and label:
+            names[title_id] = label
+    _system_title_names.cache = names
+    return names
+
+
 def system_title_name(title_id: str) -> str:
     text = title_id.lower()
+    found = _system_title_names().get(text)
+    if found:
+        return found
     if text[:8] not in ('00040010', '00040030'):
         return ''
     return _SYSTEM_BY_LOW.get(text[8:], '')
+
+
+def ghostland_name(root: str, title_id: str) -> str:
+    """Name from a ghost-land 3DS-dB checkout. The title id is the folder name."""
+    base = Path(root) / 'db' / '3ds'
+    folder = title_id.upper()
+    for category in ('base', 'dlc', 'dsiware', 'updates', 'videos', 'virtual-console'):
+        path = base / category / folder / 'meta.json'
+        if not path.is_file():
+            continue
+        try:
+            meta = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError):
+            return ''
+        return str(meta.get('name') or meta.get('formal_name') or '').strip()
+    return ''
+
+
+def load_universal_names(root: str) -> dict[str, str]:
+    """Map a title's 5-digit unique id to the Universal-DB label."""
+    path = Path(root) / 'source' / 'title-ids.json'
+    if not path.is_file():
+        return {}
+    try:
+        rows = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {str(key).upper(): str(value).strip() for key, value in rows.items() if value}
+
+
+def universal_name(names: dict[str, str], title_id: str) -> str:
+    unique = title_id.upper()[9:14]
+    label = names.get(unique, '')
+    if ' - ' in label:
+        return label.split(' - ', 1)[1].strip()
+    return label
 
 
 def load_3dsdb_names(directory: str) -> dict[str, str]:
@@ -227,8 +307,12 @@ class TitleManager:
                 return '', None, None
             name = ''
             icon = None
+            smdh = None
             if content.exefs is not None and content.exefs.icon is not None:
                 smdh = content.exefs.icon
+            elif content.exefs is not None:
+                smdh = _smdh_with_blank_magic(content.exefs)
+            if smdh is not None:
                 title = smdh.get_app_title()
                 name = title.short_desc if title else ''
                 icon = smdh.icon_large_array

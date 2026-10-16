@@ -1,0 +1,9 @@
+[submodule "third_party/3dsdb"]
+	path = third_party/3dsdb
+	url = https://github.com/hax0kartik/3dsdb.git
+[submodule "third_party/3dsdb-ghostland"]
+	path = third_party/3dsdb-ghostland
+	url = https://github.com/ghost-land/3dsdb.git
+[submodule "third_party/universal-db"]
+	path = third_party/universal-db
+	url = https://github.com/Universal-Team/db.git
