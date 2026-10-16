@@ -26,6 +26,7 @@ from .layout import (
     LauncherData,
     LayoutError,
     SaveData,
+    delete_folder,
     format_title_id,
     parse_title_id,
 )
@@ -44,6 +45,20 @@ SEED_DATA = 0x4E80
 SEED_LIMIT = 2000
 TICKET_HEADER = bytes.fromhex('0100000050030000')
 TICKET_ID_OFFSET = 0x1DC
+
+
+@dataclass
+class RemoveOptions:
+    """What to do with data that belongs to an application being removed.
+
+    Save data and extdata are copied to the backup directory either way.
+    Update and DLC are left untouched unless their flags are set.
+    """
+
+    delete_update: bool = False
+    delete_dlc: bool = False
+    delete_save: bool = False
+    delete_extdata: bool = False
 
 
 @dataclass
@@ -141,11 +156,15 @@ class Snapshot:
         update_seeddb(self.seed_blob, title_id, seed)
 
     def title_ids(self) -> list[str]:
+        cached = getattr(self, '_title_ids', None)
+        if cached is not None:
+            return list(cached)
         with TemporaryDirectory(prefix='ci-tdb-') as temp:
             root = self._fake_sd(Path(temp))
             plain = Path(temp) / 'plain'
             self._fuse(['--sd', str(root), '--db', 'sdtitle', '-x', str(plain)])
-            return sorted(path.name.lower() for path in plain.iterdir() if path.is_file() and len(path.name) == 16)
+            self._title_ids = sorted(path.name.lower() for path in plain.iterdir() if path.is_file() and len(path.name) == 16)
+            return list(self._title_ids)
 
     def _load_names(self, ids: list[str]) -> None:
         if not self.sd:
@@ -276,6 +295,7 @@ class Snapshot:
             raise LayoutError('install did not start')
         _state, _success, _apps = result
         self._sync_databases_from_sd()
+        self._title_ids = None
         cifinish = Path(self.sd) / 'cifinish.bin'
         installed = []
         if cifinish.is_file():
@@ -291,21 +311,86 @@ class Snapshot:
                     self.add_seed(title_id, seed)
         return installed
 
-    def remove(self, title_id: str) -> None:
+    def delete_folder(self, index: int) -> None:
+        delete_folder(self.savedata, self.launcher, index)
+
+    def sibling_id(self, title_id: str, high: str) -> str:
+        text = format_title_id(parse_title_id(title_id))
+        return high + text[8:]
+
+    def title_dir(self, title_id: str) -> Path:
+        text = format_title_id(parse_title_id(title_id))
+        if not self.sd:
+            raise LayoutError('SD root is required')
+        manager = titles_mod.TitleManager(self.sd, str(self.movable), str(self.boot9))
+        return manager.id1_root() / 'title' / text[:8] / text[8:]
+
+    def remove(self, title_id: str, options: RemoveOptions | None = None, extdata_id: str | None = None) -> Path:
+        """Remove a title. Returns the backup directory.
+
+        The default matches the earlier command: delete this title's files,
+        including its save, and leave updates, DLC, and extdata in place.
+        The GUI passes RemoveOptions so the user can choose.
+        """
         tid = parse_title_id(title_id)
         text = format_title_id(tid)
         if not self.sd:
             raise LayoutError('SD root is required to remove a title')
+        if text[:8] != '00040000':
+            raise LayoutError('only an application title can be removed from the manager')
+        choice = options if options is not None else RemoveOptions(delete_save=True)
         manager = titles_mod.TitleManager(self.sd, str(self.movable), str(self.boot9))
         id1 = manager.id1_root()
-        content = id1 / 'title' / text[:8] / text[8:]
-        if content.is_dir():
-            shutil.rmtree(content)
-        self._remove_from_database(text)
+        backup = Path(self.sd) / 'custom-install-backup' / datetime.now().strftime('%Y%m%d-%H%M%S') / text
+        targets = [text]
+        if choice.delete_update:
+            targets.append(self.sibling_id(text, '0004000e'))
+        if choice.delete_dlc:
+            targets.append(self.sibling_id(text, '0004008c'))
+        for target in targets:
+            directory = id1 / 'title' / target[:8] / target[8:]
+            if target != text and not directory.is_dir():
+                continue
+            if target == text:
+                remove_title_directory(directory, delete_save=choice.delete_save, save_backup=backup / target / '00000001.sav')
+            else:
+                shutil.rmtree(directory)
+            self._remove_from_database(target)
+            self._clear_icon(parse_title_id(target))
+            self._queue_ticket_removal(target)
+        self._title_ids = None
+        if extdata_id and extdata_id.lower() == self.extdata_id:
+            raise LayoutError('the Home Menu extdata is not deleted with a title')
+        ext_dir = id1 / 'extdata' / '00000000' / extdata_id if extdata_id else None
+        if ext_dir is not None and ext_dir.is_dir():
+            copy_tree(ext_dir, backup / 'extdata' / extdata_id)
+            if choice.delete_extdata:
+                shutil.rmtree(ext_dir)
         self._sync_databases_from_sd()
-        # Drop the icon. Leaving the title id out of the repacked SaveData is enough.
-        self._clear_icon(tid)
-        self._queue_ticket_removal(text)
+        return backup
+
+    def list_extdata(self) -> list[tuple[str, Path]]:
+        if not self.sd:
+            raise LayoutError('SD root is required')
+        manager = titles_mod.TitleManager(self.sd, str(self.movable), str(self.boot9))
+        base = manager.id1_root() / 'extdata' / '00000000'
+        if not base.is_dir():
+            return []
+        return sorted((path.name.lower(), path) for path in base.iterdir() if path.is_dir())
+
+    def backup_extdata(self, extdata_id: str, delete: bool) -> Path:
+        extdata_id = extdata_id.lower()
+        if delete and extdata_id == self.extdata_id:
+            raise LayoutError('the Home Menu extdata can be backed up, not deleted')
+        rows = dict(self.list_extdata())
+        source = rows.get(extdata_id)
+        if source is None:
+            raise LayoutError(f'extdata {extdata_id} was not found')
+        backup = Path(self.sd) / 'custom-install-backup' / datetime.now().strftime('%Y%m%d-%H%M%S') / 'extdata' / extdata_id
+        copy_tree(source, backup)
+        if delete:
+            shutil.rmtree(source)
+        return backup
 
     def _clear_icon(self, title_id: int) -> None:
         entry = self.savedata.find(title_id)
@@ -338,6 +423,37 @@ class Snapshot:
         # id1 is used so a missing SD fails before the database edit
         if not id1.is_dir():
             raise LayoutError(f'missing {id1}')
+
+
+def copy_tree(source: Path, dest: Path) -> None:
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(source, dest)
+
+
+def remove_title_directory(directory: Path, *, delete_save: bool, save_backup: Path | None) -> None:
+    """Delete an installed title directory.
+
+    ``00000001.sav`` is copied to ``save_backup`` when it exists. It stays in
+    the title directory when ``delete_save`` is false.
+    """
+    save_file = directory / 'data' / '00000001.sav'
+    if save_file.is_file() and save_backup is not None:
+        save_backup.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(save_file, save_backup)
+    if not directory.is_dir():
+        return
+    if delete_save or not save_file.is_file():
+        shutil.rmtree(directory)
+        return
+    for child in list(directory.iterdir()):
+        if child.name == 'data':
+            for inner in list(child.iterdir()):
+                if inner.resolve() == save_file.resolve():
+                    continue
+                shutil.rmtree(inner) if inner.is_dir() else inner.unlink()
+        else:
+            shutil.rmtree(child) if child.is_dir() else child.unlink()
 
 
 def update_seeddb(blob: bytearray, title_id: int, seed: bytes) -> None:

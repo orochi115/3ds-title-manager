@@ -34,6 +34,7 @@ LAUNCHER_NEXT_FOLDER = 0xD80
 LAUNCHER_POSITIONS = 0xD9A
 LAUNCHER_FOLDERS = 0x106A
 LAUNCHER_FOLDER_POSITIONS = 0x11DC
+LAUNCHER_MENU_ROWS = 0xB51
 LAUNCHER_FOLDER_ROWS = 0x1434
 LAUNCHER_FOLDER_NAMES = 0x1560
 LAUNCHER_FOLDER_NUMBERS = 0x1D58
@@ -148,6 +149,18 @@ class SaveData:
         _set_s16(self.blob, SAVEDATA_POSITIONS + current.index * 2, slot)
         _set_s8(self.blob, SAVEDATA_FOLDERS + current.index, folder)
 
+    def place(self, title_id: int, slot: int, folder: int) -> None:
+        """Move one icon without swapping whatever currently uses the slot."""
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'slot must be 0..{TITLE_SLOTS - 1}')
+        if folder < -1 or folder >= FOLDER_COUNT:
+            raise LayoutError('folder must be -1..59')
+        current = self.find(title_id)
+        if current is None:
+            raise LayoutError(f'{format_title_id(title_id)} is not on the menu')
+        _set_s16(self.blob, SAVEDATA_POSITIONS + current.index * 2, slot)
+        _set_s8(self.blob, SAVEDATA_FOLDERS + current.index, folder)
+
     def apply_slots(self, updates: list[tuple[int, int, int]]) -> None:
         """Apply (title_id, slot, folder) without swapping mid-loop.
 
@@ -240,6 +253,20 @@ class LauncherData:
         struct.pack_into('<I', self.blob, LAUNCHER_FOLDER_NUMBERS + free * 4, number)
         return FolderEntry(free, position, name, number, 2)
 
+    def set_folder_position(self, index: int, slot: int) -> None:
+        if not 0 <= index < FOLDER_COUNT:
+            raise LayoutError('folder index must be 0..59')
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'folder slot must be 0..{TITLE_SLOTS - 1}')
+        current = _s16(self.blob, LAUNCHER_FOLDER_POSITIONS + index * 2)
+        if current < 0:
+            raise LayoutError(f'folder {index} is not created')
+        for other in self.folders():
+            if other.index != index and other.position == slot:
+                _set_s16(self.blob, LAUNCHER_FOLDER_POSITIONS + other.index * 2, current)
+                break
+        _set_s16(self.blob, LAUNCHER_FOLDER_POSITIONS + index * 2, slot)
+
     def rename_folder(self, index: int, name: str) -> None:
         if not 0 <= index < FOLDER_COUNT:
             raise LayoutError('folder index must be 0..59')
@@ -247,6 +274,135 @@ class LauncherData:
             raise LayoutError(f'folder {index} is not created')
         name_at = LAUNCHER_FOLDER_NAMES + index * NAME_BYTES
         self.blob[name_at:name_at + NAME_BYTES] = _encode_name(name)
+
+    def menu_rows(self) -> int:
+        """Main menu row count. The file stores rows minus one, from 0 to 5."""
+        stored = self.blob[LAUNCHER_MENU_ROWS]
+        if stored > 5:
+            return 3
+        return stored + 1
+
+    def cart_slot(self) -> int | None:
+        """Linear slot of the game-card icon. It is not one of the title entries."""
+        value = struct.unpack_from('<H', self.blob, 2)[0]
+        if value >= TITLE_SLOTS:
+            return None
+        return value
+
+    def entries(self) -> list[IconEntry]:
+        found = []
+        for index in range(TITLE_SLOTS):
+            title_id = struct.unpack_from('<Q', self.blob, LAUNCHER_TITLES + index * 8)[0]
+            if title_id == EMPTY_TITLE_ID:
+                continue
+            slot = _s16(self.blob, LAUNCHER_POSITIONS + index * 2)
+            folder = _s8(self.blob, LAUNCHER_FOLDERS + index)
+            found.append(IconEntry(index, title_id, slot, folder))
+        return found
+
+    def find(self, title_id: int) -> IconEntry | None:
+        for entry in self.entries():
+            if entry.title_id == title_id:
+                return entry
+        return None
+
+    def set_icon(self, title_id: int, slot: int, folder: int) -> None:
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'slot must be 0..{TITLE_SLOTS - 1}')
+        if folder < -1 or folder >= FOLDER_COUNT:
+            raise LayoutError('folder must be -1..59')
+        current = self.find(title_id)
+        if current is None:
+            index = self._empty_index()
+            struct.pack_into('<Q', self.blob, LAUNCHER_TITLES + index * 8, title_id)
+            _set_s16(self.blob, LAUNCHER_POSITIONS + index * 2, slot)
+            _set_s8(self.blob, LAUNCHER_FOLDERS + index, folder)
+            return
+        for other in self.entries():
+            if other.title_id != title_id and other.folder == folder and other.slot == slot:
+                _set_s16(self.blob, LAUNCHER_POSITIONS + other.index * 2, current.slot)
+                _set_s8(self.blob, LAUNCHER_FOLDERS + other.index, current.folder)
+                break
+        _set_s16(self.blob, LAUNCHER_POSITIONS + current.index * 2, slot)
+        _set_s8(self.blob, LAUNCHER_FOLDERS + current.index, folder)
+
+    def place(self, title_id: int, slot: int, folder: int) -> None:
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'slot must be 0..{TITLE_SLOTS - 1}')
+        if folder < -1 or folder >= FOLDER_COUNT:
+            raise LayoutError('folder must be -1..59')
+        current = self.find(title_id)
+        if current is None:
+            raise LayoutError(f'{format_title_id(title_id)} is not on the menu')
+        _set_s16(self.blob, LAUNCHER_POSITIONS + current.index * 2, slot)
+        _set_s8(self.blob, LAUNCHER_FOLDERS + current.index, folder)
+
+    def place_folder(self, index: int, slot: int) -> None:
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'folder slot must be 0..{TITLE_SLOTS - 1}')
+        if _s16(self.blob, LAUNCHER_FOLDER_POSITIONS + index * 2) < 0:
+            raise LayoutError(f'folder {index} is not created')
+        _set_s16(self.blob, LAUNCHER_FOLDER_POSITIONS + index * 2, slot)
+
+    def set_cart_slot(self, slot: int) -> None:
+        if not 0 <= slot < TITLE_SLOTS:
+            raise LayoutError(f'cart slot must be 0..{TITLE_SLOTS - 1}')
+        struct.pack_into('<H', self.blob, 2, slot)
+
+    def _empty_index(self) -> int:
+        for index in range(TITLE_SLOTS):
+            title_id = struct.unpack_from('<Q', self.blob, LAUNCHER_TITLES + index * 8)[0]
+            if title_id == EMPTY_TITLE_ID:
+                return index
+        raise LayoutError('Launcher.dat has no free title slot (360)')
+
+
+def main_menu_slots(savedata: SaveData, launcher: LauncherData) -> set[int]:
+    """Slots taken on the main menu by an icon or a folder."""
+    used = set()
+    for entry in savedata.entries():
+        if entry.folder == -1 and entry.slot >= 0:
+            used.add(entry.slot)
+    for entry in launcher.entries():
+        if entry.folder == -1 and entry.slot >= 0:
+            used.add(entry.slot)
+    for folder in launcher.folders():
+        used.add(folder.position)
+    cart = launcher.cart_slot()
+    if cart is not None:
+        used.add(cart)
+    return used
+
+
+def delete_folder(savedata: SaveData, launcher: LauncherData, index: int) -> None:
+    """Move a folder's icons back to the main menu and clear the folder.
+
+    Raises LayoutError before changing either blob when the main menu does
+    not have a free slot for every icon inside the folder.
+    """
+    folder = next((item for item in launcher.folders() if item.index == index), None)
+    if folder is None:
+        raise LayoutError(f'folder {index} is not created')
+    children_sd = sorted((entry for entry in savedata.entries() if entry.folder == index), key=lambda entry: entry.slot)
+    children_nand = sorted((entry for entry in launcher.entries() if entry.folder == index), key=lambda entry: entry.slot)
+    used = main_menu_slots(savedata, launcher)
+    used.discard(folder.position)
+    free = [slot for slot in range(TITLE_SLOTS) if slot not in used]
+    if len(free) < len(children_sd) + len(children_nand):
+        raise LayoutError('not enough free slots on the main menu to delete this folder')
+    cursor = 0
+    for entry in children_sd:
+        _set_s16(savedata.blob, SAVEDATA_POSITIONS + entry.index * 2, free[cursor])
+        _set_s8(savedata.blob, SAVEDATA_FOLDERS + entry.index, -1)
+        cursor += 1
+    for entry in children_nand:
+        _set_s16(launcher.blob, LAUNCHER_POSITIONS + entry.index * 2, free[cursor])
+        _set_s8(launcher.blob, LAUNCHER_FOLDERS + entry.index, -1)
+        cursor += 1
+    _set_s16(launcher.blob, LAUNCHER_FOLDER_POSITIONS + index * 2, -1)
+    name_at = LAUNCHER_FOLDER_NAMES + index * NAME_BYTES
+    launcher.blob[name_at:name_at + NAME_BYTES] = b'\x00' * NAME_BYTES
+    struct.pack_into('<I', launcher.blob, LAUNCHER_FOLDER_NUMBERS + index * 4, 0)
 
 
 def blank_savedata() -> SaveData:

@@ -46,7 +46,77 @@ KIND_BY_HIGH = {
     '00040000': 'app',
     '0004000e': 'update',
     '0004008c': 'dlc',
+    '00040010': 'system',
+    '00040030': 'applet',
+    '00048004': 'dsiware',
+    '00048005': 'dsiware',
 }
+
+# Names for NAND system titles. The eShop 3dsdb files do not list these.
+# Low 32 bits differ by region; the high half is 00040010 or 00040030.
+_SYSTEM_BY_LOW = {
+    '00020000': 'System Settings', '00021000': 'System Settings', '00022000': 'System Settings',
+    '00026000': 'System Settings', '00027000': 'System Settings', '00028000': 'System Settings',
+    '00020100': 'Download Play', '00021100': 'Download Play', '00022100': 'Download Play',
+    '00026100': 'Download Play', '00027100': 'Download Play', '00028100': 'Download Play',
+    '00020200': 'Activity Log', '00021200': 'Activity Log', '00022200': 'Activity Log',
+    '00026200': 'Activity Log', '00027200': 'Activity Log', '00028200': 'Activity Log',
+    '00020300': 'Health and Safety', '00021300': 'Health and Safety', '00022300': 'Health and Safety',
+    '00026300': 'Health and Safety', '00027300': 'Health and Safety', '00028300': 'Health and Safety',
+    '20020300': 'Health and Safety', '20021300': 'Health and Safety', '20022300': 'Health and Safety',
+    '20027300': 'Health and Safety',
+    '00020a00': 'System Transfer', '00021a00': 'System Transfer', '00022a00': 'System Transfer',
+    '00020b00': 'Nintendo Zone', '00021b00': 'Nintendo Zone', '00022b00': 'Nintendo Zone',
+    '00020f00': 'System Updater', '00021f00': 'System Updater', '00022f00': 'System Updater',
+    '0002bf00': 'Nintendo Network ID Settings', '0002c000': 'Nintendo Network ID Settings',
+    '0002c100': 'Nintendo Network ID Settings',
+    '00020400': 'Nintendo 3DS Camera', '00021400': 'Nintendo 3DS Camera', '00022400': 'Nintendo 3DS Camera',
+    '00020500': 'Nintendo 3DS Sound', '00021500': 'Nintendo 3DS Sound', '00022500': 'Nintendo 3DS Sound',
+    '00020700': 'Mii Maker', '00021700': 'Mii Maker', '00022700': 'Mii Maker',
+    '00020800': 'StreetPass Mii Plaza', '00021800': 'StreetPass Mii Plaza', '00022800': 'StreetPass Mii Plaza',
+    '00020900': 'Nintendo eShop', '00021900': 'Nintendo eShop', '00022900': 'Nintendo eShop',
+    '00020d00': 'Face Raiders', '00021d00': 'Face Raiders', '00022d00': 'Face Raiders',
+    '00020e00': 'AR Games', '00021e00': 'AR Games', '00022e00': 'AR Games',
+    '00008202': 'HOME Menu', '00008f02': 'HOME Menu', '00009802': 'HOME Menu',
+    '0000a102': 'HOME Menu', '0000a902': 'HOME Menu', '0000b102': 'HOME Menu',
+    '00008d02': 'Friend List', '00009602': 'Friend List', '00009f02': 'Friend List',
+    '00008802': 'Internet Browser', '00009402': 'Internet Browser', '00009d02': 'Internet Browser',
+    '00008602': 'Instruction Manual', '00009202': 'Instruction Manual', '00009b02': 'Instruction Manual',
+    '00008702': 'Game Notes', '00009302': 'Game Notes', '00009c02': 'Game Notes',
+    '00008e02': 'Notifications', '00009702': 'Notifications', '0000a002': 'Notifications',
+}
+
+
+def system_title_name(title_id: str) -> str:
+    text = title_id.lower()
+    if text[:8] not in ('00040010', '00040030'):
+        return ''
+    return _SYSTEM_BY_LOW.get(text[8:], '')
+
+
+def load_3dsdb_names(directory: str) -> dict[str, str]:
+    """Read hax0kartik 3dsdb list_*.json files. Later regions do not replace earlier ones.
+
+    JP is loaded last so a Japanese name wins when the same id is in several lists.
+    """
+    import json
+    root = Path(directory)
+    names: dict[str, str] = {}
+    order = ['list_US.json', 'list_GB.json', 'list_KR.json', 'list_TW.json', 'list_JP.json']
+    paths = [root / name for name in order if (root / name).is_file()]
+    if not paths:
+        paths = sorted(root.glob('list_*.json'))
+    for path in paths:
+        try:
+            rows = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError):
+            continue
+        for row in rows:
+            title_id = str(row.get('TitleID', '')).lower()
+            name = str(row.get('Name', '')).strip()
+            if len(title_id) == 16 and name:
+                names[title_id] = name
+    return names
 
 
 def save3ds_fuse_path() -> str:
@@ -127,16 +197,54 @@ class TitleManager:
                 found.append(InstalledTitle(title_id, kind, name, None, None))
         return found
 
+    def _open_content(self, title_id: str):
+        reader = self.sdfs.open_title(title_id, load_contents=True)
+        content = reader.contents.get(0)
+        return reader, content
+
     def _read_name(self, title_id: str) -> str:
         reader = None
         try:
-            reader = self.sdfs.open_title(title_id, load_contents=True)
-            content = reader.contents.get(0)
+            reader, content = self._open_content(title_id)
             if content is None or content.exefs is None or content.exefs.icon is None:
                 return ''
             return content.exefs.icon.get_app_title().short_desc
         except Exception:
             return ''
+        finally:
+            if reader is not None:
+                try:
+                    reader.close()
+                except Exception:
+                    pass
+
+    def read_display(self, title_id: str) -> tuple[str, list | None, str | None]:
+        """Return the short title, a 48x48 RGB grid, and the extdata id."""
+        reader = None
+        try:
+            reader, content = self._open_content(title_id)
+            if content is None:
+                return '', None, None
+            name = ''
+            icon = None
+            if content.exefs is not None and content.exefs.icon is not None:
+                smdh = content.exefs.icon
+                title = smdh.get_app_title()
+                name = title.short_desc if title else ''
+                icon = smdh.icon_large_array
+            extdata_id = None
+            try:
+                from pyctr.type.ncch import NCCHSection
+                with content.open_raw_section(NCCHSection.ExtendedHeader) as header:
+                    header.seek(0x200 + 0x30)
+                    raw = header.read(8)
+                if len(raw) == 8 and raw != b'\x00' * 8:
+                    extdata_id = raw[0:4][::-1].hex()
+            except Exception:
+                extdata_id = None
+            return name, icon, extdata_id
+        except Exception:
+            return '', None, None
         finally:
             if reader is not None:
                 try:

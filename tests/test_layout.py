@@ -76,6 +76,110 @@ class LauncherTests(unittest.TestCase):
         self.assertEqual(second.position, 1)
         self.assertEqual(format_title_id(0x8F), '000000000000008f')
 
+    def test_menu_rows_are_stored_minus_one(self):
+        launcher = blank_launcher()
+        self.assertEqual(launcher.menu_rows(), 1)
+        launcher.blob[0xB51] = 2
+        self.assertEqual(launcher.menu_rows(), 3)
+        launcher.blob[0xB51] = 9
+        self.assertEqual(launcher.menu_rows(), 3)
+
+    def test_cart_slot_is_the_leading_u16(self):
+        launcher = blank_launcher()
+        self.assertEqual(launcher.cart_slot(), 0)
+        launcher.blob[2:4] = (4).to_bytes(2, 'little')
+        self.assertEqual(launcher.cart_slot(), 4)
+        launcher.blob[2:4] = (0xFFFF).to_bytes(2, 'little')
+        self.assertIsNone(launcher.cart_slot())
+
+    def test_delete_folder_returns_icons_to_the_main_menu(self):
+        from custominstall.layout import delete_folder
+        savedata = blank_savedata()
+        launcher = blank_launcher()
+        folder = launcher.create_folder('Box', 0)
+        savedata.set_icon(0x0004000000000001, 0, folder.index)
+        savedata.set_icon(0x0004000000000002, 1, folder.index)
+        delete_folder(savedata, launcher, folder.index)
+        self.assertEqual(launcher.folders(), [])
+        slots = {entry.title_id: (entry.folder, entry.slot) for entry in savedata.entries()}
+        self.assertEqual(slots[0x0004000000000001], (-1, 0))
+        self.assertEqual(slots[0x0004000000000002], (-1, 1))
+
+    def test_delete_folder_keeps_bytes_when_the_main_menu_is_full(self):
+        from custominstall.layout import delete_folder
+        savedata = blank_savedata()
+        launcher = blank_launcher()
+        folder = launcher.create_folder('Box', 0)
+        savedata.set_icon(0x00040000000000AA, 0, folder.index)
+        savedata.set_icon(0x00040000000000BB, 1, folder.index)
+        for slot in range(1, 360):
+            launcher.set_icon(0x0004001000000000 + slot, slot, -1)
+        before_sd = bytes(savedata.blob)
+        before_launcher = bytes(launcher.blob)
+        with self.assertRaises(LayoutError):
+            delete_folder(savedata, launcher, folder.index)
+        self.assertEqual(bytes(savedata.blob), before_sd)
+        self.assertEqual(bytes(launcher.blob), before_launcher)
+
+
+class NameDbTests(unittest.TestCase):
+    def test_system_name_and_3dsdb_json(self):
+        import tempfile
+        from pathlib import Path
+        from custominstall.titles import load_3dsdb_names, system_title_name
+        self.assertEqual(system_title_name('0004001000020000'), 'System Settings')
+        self.assertEqual(system_title_name('0004001020020300'), 'Health and Safety')
+        self.assertEqual(system_title_name('0004000000123400'), '')
+        with tempfile.TemporaryDirectory() as temp:
+            Path(temp, 'list_JP.json').write_text(
+                '[{"TitleID": "000480044B513945", "Name": "Example DSiWare"}]', encoding='utf-8')
+            names = load_3dsdb_names(temp)
+        self.assertEqual(names['000480044b513945'], 'Example DSiWare')
+
+
+class RemoveFilesTests(unittest.TestCase):
+    def test_save_is_backed_up_and_can_stay_in_place(self):
+        import tempfile
+        from pathlib import Path
+        from custominstall.snapshot import remove_title_directory
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            title = root / 'title'
+            data = title / 'data'
+            data.mkdir(parents=True)
+            (title / 'content' / '00000000.app').parent.mkdir()
+            (title / 'content' / '00000000.app').write_bytes(b'app')
+            (data / '00000001.sav').write_bytes(b'save-bytes')
+            backup = root / 'backup' / '00000001.sav'
+            remove_title_directory(title, delete_save=False, save_backup=backup)
+            self.assertEqual(backup.read_bytes(), b'save-bytes')
+            self.assertEqual((data / '00000001.sav').read_bytes(), b'save-bytes')
+            self.assertFalse((title / 'content').exists())
+
+    def test_save_backup_remains_when_the_original_is_deleted(self):
+        import tempfile
+        from pathlib import Path
+        from custominstall.snapshot import remove_title_directory
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            title = root / 'title'
+            (title / 'data').mkdir(parents=True)
+            (title / 'data' / '00000001.sav').write_bytes(b'save-bytes')
+            (title / 'content').mkdir()
+            backup = root / 'backup' / '00000001.sav'
+            remove_title_directory(title, delete_save=True, save_backup=backup)
+            self.assertEqual(backup.read_bytes(), b'save-bytes')
+            self.assertFalse(title.exists())
+
+    def test_sibling_id_uses_the_low_32_bits(self):
+        from custominstall.snapshot import RemoveOptions
+        self.assertFalse(RemoveOptions().delete_update)
+        # The id helper does not need a snapshot.
+        from custominstall.layout import format_title_id
+        text = format_title_id(0x0004000012345678)
+        self.assertEqual('0004000e' + text[8:], '0004000e12345678')
+        self.assertEqual('0004008c' + text[8:], '0004008c12345678')
+
 
 class SeedTests(unittest.TestCase):
     def test_add_seed_appends_a_little_endian_title_id(self):
