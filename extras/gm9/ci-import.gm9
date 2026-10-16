@@ -1,0 +1,67 @@
+# custom-install: write an ci-export snapshot back.
+# Boot GodMode9 directly. Do not open HOME Menu between export and import.
+# This restores the raw containers. It does not apply a loose Launcher.dat.
+# A backup of the live files is written to sd:/gm9/out/ci-manage/backup-<date>-<time>/ first.
+
+set ERRORMSG "ci-import failed"
+
+set HMSAVE 00020082
+set EXTID 00000082
+if chk $[REGION] "USA"
+	set HMSAVE 0002008f
+	set EXTID 0000008f
+elif chk $[REGION] "EUR"
+	set HMSAVE 00020098
+	set EXTID 00000098
+elif chk $[REGION] "CHN"
+	set HMSAVE 000200a1
+	set EXTID 000000a1
+elif chk $[REGION] "KOR"
+	set HMSAVE 000200a9
+	set EXTID 000000a9
+elif chk $[REGION] "TWN"
+	set HMSAVE 000200b1
+	set EXTID 000000b1
+elif chk $[REGION] "JPN"
+	set HMSAVE 00020082
+	set EXTID 00000082
+else
+	echo "Region $[REGION] is not JPN, USA, EUR, CHN, KOR, or TWN."
+	ask "Abort?"
+end
+
+dirsel "Select one ci-manage export folder" 0:/gm9/out/ci-manage SNAP
+set BAK $[GM9OUT]/ci-manage/backup-$[DATESTAMP]-$[TIMESTAMP]
+
+echo "Snapshot:\n$[SNAP]\n\nLive files are copied to:\n$[BAK]\n\nThen NAND ticket.db, HOME Menu save, seed save, SD title databases, and HOME Menu extdata are replaced."
+ask "Write this snapshot back?"
+
+mkdir $[GM9OUT]/ci-manage
+mkdir $[BAK]
+mkdir $[BAK]/nand
+mkdir $[BAK]/sd
+
+echo "Backing up the live files"
+cp -w 1:/dbs/ticket.db $[BAK]/nand/ticket.db
+cp -w 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000 $[BAK]/nand/homemenu-save.bin
+cp -w 1:/data/$[SYSID0]/sysdata/0001000f/00000000 $[BAK]/nand/seed-save.bin
+find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/title.db TITLEDB
+cp -w $[TITLEDB] $[BAK]/sd/title.db
+find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/import.db IMPORTDB
+cp -w $[IMPORTDB] $[BAK]/sd/import.db
+find 0:/Nintendo 3DS/$[SYSID0]/*/extdata/00000000/$[EXTID] EXTDIR
+cp $[EXTDIR] $[BAK]/sd/homemenu-extdata
+
+allow -a 1:/
+echo "Writing the snapshot"
+cp -w -n $[SNAP]/nand/ticket.db 1:/dbs/ticket.db
+cp -w -n $[SNAP]/nand/homemenu-save.bin 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000
+cp -w -n $[SNAP]/nand/seed-save.bin 1:/data/$[SYSID0]/sysdata/0001000f/00000000
+cp -w -n $[SNAP]/sd/title.db $[TITLEDB]
+cp -w -n $[SNAP]/sd/import.db $[IMPORTDB]
+cp -w -n $[SNAP]/sd/homemenu-extdata 0:/gm9/out/ci-manage/tmp-extdata-import
+rm $[EXTDIR]
+mv 0:/gm9/out/ci-manage/tmp-extdata-import $[EXTDIR]
+
+echo "Import finished.\nPower off from GodMode9, then boot the system.\nBackup:\n$[BAK]"
+set SUCCESSMSG "ci-import done"

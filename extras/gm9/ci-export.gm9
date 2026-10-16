@@ -1,0 +1,65 @@
+# custom-install: export the files needed to manage titles on a PC.
+# Run from GodMode9 before opening HOME Menu.
+# Output: sd:/gm9/out/ci-manage/<date>-<time>/
+# Plaintext Launcher.dat and SEEDDB are included when the save mounts.
+# The raw containers are the files the import script writes back.
+
+set ERRORMSG "ci-export failed"
+set OUT $[GM9OUT]/ci-manage/$[DATESTAMP]-$[TIMESTAMP]
+
+set HMSAVE 00020082
+set EXTID 00000082
+if chk $[REGION] "USA"
+	set HMSAVE 0002008f
+	set EXTID 0000008f
+elif chk $[REGION] "EUR"
+	set HMSAVE 00020098
+	set EXTID 00000098
+elif chk $[REGION] "CHN"
+	set HMSAVE 000200a1
+	set EXTID 000000a1
+elif chk $[REGION] "KOR"
+	set HMSAVE 000200a9
+	set EXTID 000000a9
+elif chk $[REGION] "TWN"
+	set HMSAVE 000200b1
+	set EXTID 000000b1
+elif chk $[REGION] "JPN"
+	set HMSAVE 00020082
+	set EXTID 00000082
+else
+	echo "Region $[REGION] is not JPN, USA, EUR, CHN, KOR, or TWN."
+	ask "Abort?"
+end
+
+mkdir $[GM9OUT]/ci-manage
+mkdir $[OUT]
+mkdir $[OUT]/nand
+mkdir $[OUT]/sd
+mkdir $[OUT]/plain
+
+echo "Exporting to\n$[OUT]"
+
+cp -w 1:/private/movable.sed $[OUT]/nand/movable.sed
+cp -w S:/boot9.bin $[OUT]/nand/boot9.bin
+cp -w 1:/dbs/ticket.db $[OUT]/nand/ticket.db
+cp -w 1:/data/$[SYSID0]/sysdata/$[HMSAVE]/00000000 $[OUT]/nand/homemenu-save.bin
+cp -w 1:/data/$[SYSID0]/sysdata/0001000f/00000000 $[OUT]/nand/seed-save.bin
+
+imgmount -s -o $[OUT]/nand/homemenu-save.bin
+cp -s -o G:/Launcher.dat $[OUT]/plain/Launcher.dat
+imgumount -s -o
+
+imgmount -s -o $[OUT]/nand/seed-save.bin
+cp -s -o G:/SEEDDB $[OUT]/plain/SEEDDB
+imgumount -s -o
+
+find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/title.db TITLEDB
+cp -w $[TITLEDB] $[OUT]/sd/title.db
+find 0:/Nintendo 3DS/$[SYSID0]/*/dbs/import.db IMPORTDB
+cp -w $[IMPORTDB] $[OUT]/sd/import.db
+find 0:/Nintendo 3DS/$[SYSID0]/*/extdata/00000000/$[EXTID] EXTDIR
+cp $[EXTDIR] $[OUT]/sd/homemenu-extdata
+
+echo "Exported.\nLeave HOME Menu alone until you import or finish on the PC.\n\n$[OUT]"
+set SUCCESSMSG "ci-export done"
