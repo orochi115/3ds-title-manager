@@ -178,6 +178,14 @@ class RemoveFilesTests(unittest.TestCase):
             self.assertEqual(backup.read_bytes(), b'save-bytes')
             self.assertFalse(title.exists())
 
+    def test_plaza_update_finds_the_nand_system_title(self):
+        from custominstall.snapshot import base_title_id
+        installed = ['0004001000020800', '0004000e00020800', '0004008c00020800']
+        self.assertEqual(base_title_id('0004000e00020800', installed), '0004001000020800')
+        self.assertEqual(base_title_id('0004008c00020800', installed), '0004001000020800')
+        installed.append('0004000000020800')
+        self.assertEqual(base_title_id('0004000e00020800', installed), '0004000000020800')
+
     def test_sibling_id_uses_the_low_32_bits(self):
         from custominstall.snapshot import RemoveOptions
         self.assertFalse(RemoveOptions().delete_update)

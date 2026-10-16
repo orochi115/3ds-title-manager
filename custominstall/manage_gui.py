@@ -147,10 +147,9 @@ class ManagerApp(ttk.Frame):
         list_scroll = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=self.tree.yview)
         list_scroll.grid(row=0, column=1, sticky=tk.NS)
         self.tree.configure(yscrollcommand=list_scroll.set)
-        self.tree.bind('<<TreeviewSelect>>', self._on_tree)
+        self.tree.bind('<ButtonRelease-1>', self._on_list_click)
         self.tree.bind('<Double-Button-1>', self._on_tree_double)
         self.tree.bind('<MouseWheel>', lambda event: self.tree.yview_scroll(int(-event.delta / 120), 'units'))
-        self._ignore_tree = False
         self.detail = tk.Text(right, height=8, wrap='word')
         self.detail.pack(fill=tk.X, pady=4)
         actions = ttk.Frame(right)
@@ -161,7 +160,7 @@ class ManagerApp(ttk.Frame):
             ('Move to...', self.move_to_screen),
             ('Rename folder', self.rename_folder),
             ('Delete folder', self.delete_folder),
-            ('Delete app', self.delete_app),
+            ('Delete', self.delete_app),
         ):
             button = ttk.Button(actions, text=text, command=command)
             button.pack(side=tk.LEFT, padx=2, pady=2)
@@ -300,8 +299,8 @@ class ManagerApp(ttk.Frame):
             title_id = format_title_id(entry.title_id)
             if title_id in seen:
                 continue
-            kind = KIND_BY_HIGH.get(title_id[:8], 'system')
-            rows.append((title_id, kind, entry.slot, entry.folder, snap._names.get(title_id, '')))
+            base = KIND_BY_HIGH.get(title_id[:8], 'system')
+            rows.append((title_id, f'{base} (nand)', entry.slot, entry.folder, snap._names.get(title_id, '')))
         for folder in snap.folders():
             rows.append((f'folder-{folder.index}', 'folder', folder.position, folder.index, folder.name))
         cart = snap.launcher.cart_slot()
@@ -319,7 +318,6 @@ class ManagerApp(ttk.Frame):
     def _draw_list(self) -> None:
         selected = self.tree.selection()
         yview = self.tree.yview()
-        self._ignore_tree = True
         self.tree.delete(*self.tree.get_children())
         for title_id, kind, slot, folder, name in self._all_rows():
             iid = title_id if title_id == 'gamecard' or title_id.startswith('folder-') else f't-{title_id}'
@@ -329,7 +327,6 @@ class ManagerApp(ttk.Frame):
         if selected and self.tree.exists(selected[0]):
             self.tree.selection_set(selected[0])
         self.tree.yview_moveto(yview[0])
-        self._ignore_tree = False
 
     def _view_rows(self) -> int:
         if self.view_folder < 0:
@@ -388,7 +385,7 @@ class ManagerApp(ttk.Frame):
             x = column * CELL + 4
             y = row * CELL + 4
             kind = self.cells.get(slot)
-            selected = kind is not None and self.selected == kind[:2]
+            selected = kind is not None and kind[1] in self._highlight_ids()
             fill = '#3d5a80' if selected else '#243447'
             self.slot_rects[slot] = self.canvas.create_rectangle(x, y, x + 60, y + 60, fill=fill, outline='#0d1b2a')
             if kind is None:
@@ -403,7 +400,8 @@ class ManagerApp(ttk.Frame):
                 self.canvas.create_text(x + 30, y + 30, text='CARD', fill='#1b2838')
             elif kind[0] == 'system':
                 label = kind[2] or kind[1][-8:]
-                self.canvas.create_text(x + 30, y + 30, text=label[:12], fill='#8d99ae', width=52)
+                self.canvas.create_text(x + 30, y + 22, text='NAND', fill='#e9c46a', font=('TkDefaultFont', 8))
+                self.canvas.create_text(x + 30, y + 40, text=label[:10], fill='#8d99ae', width=52)
             elif kind[0] == 'sd':
                 self.canvas.create_text(x + 30, y + 30, text=(kind[2] or kind[1][-8:])[:12], fill='#f1faee', width=52)
             else:
@@ -440,11 +438,16 @@ class ManagerApp(ttk.Frame):
             return
         title_id, row_kind, slot, folder, name = row
         extra = ''
-        if row_kind == 'app':
+        if row_kind.endswith('(nand)'):
+            extra = '\nOn NAND. This title cannot be deleted here.'
+        elif row_kind == 'app':
             low = title_id[8:]
             related = [item[0] for item in self._all_rows() if item[0].endswith(low) and item[0] != title_id and item[1] != 'folder']
             ext = self.extdata_ids.get(title_id, 'not read yet' if self.names_pending else 'none')
             extra = f'\nRelated: {", ".join(related) if related else "none"}\nExtdata: {ext}'
+        elif title_id[:8] in ('0004000e', '0004008c'):
+            base = self.snap.base_title_id(title_id, [item[0] for item in self._all_rows()])
+            extra = f'\nBase app: {base or "not installed"}\nDelete removes only this update or DLC.'
         self.detail.insert(tk.END, f'{name or "(no name yet)"}\n{title_id}\n{row_kind}  slot {slot}  folder {folder}{extra}')
         self._sync_buttons()
 
@@ -468,21 +471,54 @@ class ManagerApp(ttk.Frame):
             return 'gamecard'
         return f't-{ident}'
 
-    def _select_cell(self, slot: int | None) -> None:
-        cell = self.cells.get(slot) if slot is not None else None
-        self.selected = None if cell is None else cell[:2]
-        for drawn, rect in self.slot_rects.items():
-            chosen = self.cells.get(drawn)
-            on = chosen is not None and self.selected == chosen[:2]
-            self.canvas.itemconfig(rect, fill='#3d5a80' if on else '#243447')
-        if self.selected is not None:
-            iid = self._row_iid(*self.selected)
-            if self.tree.exists(iid):
-                self._ignore_tree = True
-                self.tree.selection_set(iid)
-                self.tree.see(iid)
-                self._ignore_tree = False
+    def _apply_selection(self, selected: tuple | None, *, reveal: bool) -> None:
+        """Highlight the same item on the grid and in the list.
+
+        ``reveal`` moves the grid to that item. A grid click leaves the current
+        screen where it is. Neither path asks the other widget to click itself.
+        """
+        self.selected = selected
+        if reveal:
+            place = self._location()
+            if place is not None:
+                folder, _slot = place
+                self.view_folder = -1 if folder in (None, -1) else folder
+            self._draw_grid()
+            if place is not None and place[1] in self.cells:
+                self._scroll_to_slot(place[1])
+        else:
+            self._paint_grid_selection()
+        self._paint_list_selection(see=True)
         self._draw_detail()
+
+    def _highlight_ids(self) -> set:
+        if self.selected is None:
+            return set()
+        _kind, ident = self.selected
+        found = {ident}
+        base = self._base_id(ident)
+        if base:
+            found.add(base)
+        return found
+
+    def _paint_grid_selection(self) -> None:
+        highlighted = self._highlight_ids()
+        for slot, rect in self.slot_rects.items():
+            chosen = self.cells.get(slot)
+            on = chosen is not None and chosen[1] in highlighted
+            self.canvas.itemconfig(rect, fill='#3d5a80' if on else '#243447')
+
+    def _paint_list_selection(self, *, see: bool) -> None:
+        current = self.tree.selection()
+        iid = None if self.selected is None else self._row_iid(*self.selected)
+        if iid and self.tree.exists(iid):
+            if current != (iid,):
+                self.tree.selection_set(iid)
+            if see:
+                self.tree.update_idletasks()
+                self.tree.see(iid)
+        elif current:
+            self.tree.selection_remove(current)
 
     def _on_press(self, event) -> None:
         self._press_slot = self._slot_at(event)
@@ -491,8 +527,8 @@ class ManagerApp(ttk.Frame):
         self._ghost = None
         self._drop_mark = None
         self._selection_before_press = self.selected
-        self._tree_before_press = self.tree.selection()
-        self._select_cell(self._press_slot)
+        cell = self.cells.get(self._press_slot) if self._press_slot is not None else None
+        self._apply_selection(None if cell is None else cell[:2], reveal=False)
 
     def _on_motion(self, event) -> None:
         source = getattr(self, '_press_slot', None)
@@ -551,52 +587,61 @@ class ManagerApp(ttk.Frame):
         slot = self._slot_at(event)
         cell = self.cells.get(slot) if slot is not None else None
         if cell and cell[0] == 'folder':
-            # Opening a folder should not select that folder in the list.
             self._press_slot = None
-            self.selected = getattr(self, '_selection_before_press', None)
-            previous = getattr(self, '_tree_before_press', ())
-            self._ignore_tree = True
-            self.tree.selection_remove(self.tree.selection())
-            if previous and self.tree.exists(previous[0]):
-                self.tree.selection_set(previous)
-            self._ignore_tree = False
             self.show_folder(cell[1])
-            self._draw_detail()
 
-    def _on_tree(self, _event) -> None:
-        if self._ignore_tree or self.snap is None:
+    def _on_list_click(self, event) -> None:
+        if self.snap is None:
             return
-        selected = self.tree.selection()
-        if not selected:
+        row = self.tree.identify_row(event.y)
+        if not row:
             return
-        iid = selected[0]
+        self._apply_selection(self._selection_from_iid(row), reveal=True)
+
+    def _selection_from_iid(self, iid: str) -> tuple | None:
         if iid == 'gamecard':
-            self.selected = ('card', 'gamecard')
-        elif iid.startswith('folder-'):
-            self.selected = ('folder', int(iid.split('-', 1)[1]))
-        elif iid.startswith('t-'):
+            return ('card', 'gamecard')
+        if iid.startswith('folder-'):
+            return ('folder', int(iid.split('-', 1)[1]))
+        if iid.startswith('t-'):
             title_id = iid[2:]
-            kind = 'app' if title_id.startswith('00040000') else 'sd' if self.snap.savedata.find(int(title_id, 16)) else 'system'
-            self.selected = (kind, title_id)
-        else:
-            return
-        place = self._location()
-        if place is not None:
-            folder, _slot = place
-            self.view_folder = -1 if folder in (None, -1) else folder
-        self._draw_grid()
-        if place is not None and place[1] in self.cells:
-            self._scroll_to_slot(place[1])
-        self._draw_detail()
+            return (self._kind_for(title_id), title_id)
+        return None
 
     def _on_tree_double(self, _event) -> None:
         self.open_selected_folder()
 
     def show_folder(self, index: int) -> None:
-        """Change the grid screen without changing the list selection."""
+        """Open a screen and clear the selection on both sides."""
         self.view_folder = index
+        self.selected = None
         self._draw_grid()
+        self._paint_list_selection(see=False)
+        self._draw_detail()
         self.canvas.xview_moveto(0)
+
+    def _kind_for(self, title_id: str) -> str:
+        title = int(title_id, 16)
+        if self.snap.savedata.find(title) is not None:
+            return 'app' if title_id.startswith('00040000') else 'sd'
+        return 'system'
+
+    def _base_id(self, ident) -> str | None:
+        text = str(ident)
+        if self.snap is None or len(text) != 16 or text[:8] not in ('0004000e', '0004008c'):
+            return None
+        return self.snap.base_title_id(text, [item[0] for item in self._all_rows()])
+
+    def _deletable(self, kind: str, ident) -> bool:
+        text = str(ident)
+        if self.snap is None or len(text) != 16:
+            return False
+        if text[:8] in ('0004000e', '0004008c'):
+            row = next((item for item in self._all_rows() if item[0] == text), None)
+            return row is not None and row[1] in ('update', 'dlc')
+        if kind != 'app' or not text.startswith('00040000'):
+            return False
+        return self.snap.savedata.find(int(text, 16)) is not None
 
     def _location(self) -> tuple[int, int] | None:
         if self.selected is None or self.snap is None:
@@ -610,7 +655,8 @@ class ManagerApp(ttk.Frame):
                 if folder.index == ident:
                     return -1, folder.position
             return None
-        title_id = int(ident, 16)
+        text = self._base_id(ident) or ident
+        title_id = int(text, 16)
         entry = self.snap.savedata.find(title_id) or self.snap.launcher.find(title_id)
         if entry is None or entry.slot < 0:
             return None
@@ -772,7 +818,7 @@ class ManagerApp(ttk.Frame):
             'Move to...': can_move,
             'Rename folder': kind == 'folder',
             'Delete folder': kind == 'folder',
-            'Delete app': kind == 'app' and str(ident).startswith('00040000'),
+            'Delete': self._deletable(kind, ident),
         }
         for name, button in self.buttons.items():
             button.state(['!disabled'] if enabled.get(name) else ['disabled'])
@@ -884,10 +930,13 @@ class ManagerApp(ttk.Frame):
         self._set_status(f'Installed {", ".join(installed)}. Save snapshot, then import before HOME Menu.')
 
     def delete_app(self) -> None:
-        if not self.selected or self.selected[0] != 'app' or self.snap is None:
-            self._set_status('Select an application. Updates and DLC are removed from its dialog.')
+        if self.snap is None or not self.selected or not self._deletable(*self.selected):
+            self._set_status('Only an SD application, update, or DLC can be deleted.')
             return
         title_id = self.selected[1]
+        if title_id[:8] in ('0004000e', '0004008c'):
+            self._confirm_addon(title_id)
+            return
         paths = self._paths()
         self._set_status('Looking up the save, extdata, update, and DLC...')
 
@@ -898,6 +947,23 @@ class ManagerApp(ttk.Frame):
                 self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
                 return
             self.after(0, lambda: self._confirm_delete(title_id, info))
+
+        Thread(target=work, daemon=True).start()
+
+    def _confirm_addon(self, title_id: str) -> None:
+        kind = 'update' if title_id.startswith('0004000e') else 'DLC'
+        base = self._base_id(title_id) or 'not installed'
+        if not mb.askyesno('Delete', f'Delete {kind} {title_id}?\nThe base app {base}, its save, and its extdata stay.\nThe title folder is copied to custom-install-backup first.'):
+            return
+        self._set_status('Deleting...')
+
+        def work():
+            try:
+                backup = self.snap.remove_addon(title_id)
+            except Exception as exc:
+                self.after(0, lambda: self._set_status(f'{type(exc).__name__}: {exc}'))
+                return
+            self.after(0, lambda: self._deleted(title_id, backup))
 
         Thread(target=work, daemon=True).start()
 

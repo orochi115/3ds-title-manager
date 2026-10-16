@@ -318,6 +318,14 @@ class Snapshot:
         text = format_title_id(parse_title_id(title_id))
         return high + text[8:]
 
+    def base_title_id(self, addon_id: str, candidates: list[str] | None = None) -> str | None:
+        """The installed app, demo, or system title that owns this update or DLC.
+
+        StreetPass Mii Plaza is NAND ``00040010`` plus the same low 32 bits,
+        not the SD ``00040000`` id.
+        """
+        return base_title_id(addon_id, candidates if candidates is not None else self.title_ids())
+
     def title_dir(self, title_id: str) -> Path:
         text = format_title_id(parse_title_id(title_id))
         if not self.sd:
@@ -366,6 +374,25 @@ class Snapshot:
             copy_tree(ext_dir, backup / 'extdata' / extdata_id)
             if choice.delete_extdata:
                 shutil.rmtree(ext_dir)
+        self._sync_databases_from_sd()
+        return backup
+
+    def remove_addon(self, title_id: str) -> Path:
+        """Delete one SD update or DLC. The base app, its save, and its extdata stay."""
+        text = format_title_id(parse_title_id(title_id))
+        if text[:8] not in ('0004000e', '0004008c'):
+            raise LayoutError('only an update or DLC can be removed on its own')
+        if not self.sd:
+            raise LayoutError('SD root is required to remove a title')
+        directory = self.title_dir(text)
+        backup = Path(self.sd) / 'custom-install-backup' / datetime.now().strftime('%Y%m%d-%H%M%S') / text
+        if directory.is_dir():
+            copy_tree(directory, backup)
+            shutil.rmtree(directory)
+        self._remove_from_database(text)
+        self._clear_icon(parse_title_id(text))
+        self._queue_ticket_removal(text)
+        self._title_ids = None
         self._sync_databases_from_sd()
         return backup
 
@@ -423,6 +450,27 @@ class Snapshot:
         # id1 is used so a missing SD fails before the database edit
         if not id1.is_dir():
             raise LayoutError(f'missing {id1}')
+
+
+BASE_HIGHS = ('00040000', '00040002', '00040010')
+
+
+def base_title_id(addon_id: str, candidates: list[str]) -> str | None:
+    """Pick the installed title that shares this update or DLC's low 32 bits.
+
+    Preference is an SD app, then a demo, then a system title such as
+    StreetPass Mii Plaza (``00040010``).
+    """
+    text = addon_id.lower()
+    if len(text) != 16 or text[:8] not in ('0004000e', '0004008c'):
+        return None
+    low = text[8:]
+    found = {item.lower() for item in candidates if len(item) == 16 and item[8:].lower() == low}
+    for high in BASE_HIGHS:
+        match = high + low
+        if match in found:
+            return match
+    return None
 
 
 def copy_tree(source: Path, dest: Path) -> None:
