@@ -1,6 +1,65 @@
 # custom-install
 Installs a title directly to an SD card for the Nintendo 3DS. Originally created late June 2019.
 
+## Title manager
+
+The title manager edits a GodMode9 snapshot of the HOME Menu, then writes it back in one import. It does not edit the console while HOME Menu is running. The original CIA installer is still `python -m custominstall` and `python -m custominstall.gui`.
+
+### One-time setup
+
+```
+git submodule update --init third_party/3dsdb third_party/universal-db third_party/3DS-rom-tools
+```
+
+`third_party/3dsdb-ghostland` is optional. It is large because it contains images. Skip it if you do not need its names and icons. `third_party/3DS-rom-tools` supplies `seeddb/seeddb.bin` for seed-encrypted CIAs.
+
+Linux still needs `save3ds_fuse` on `PATH`, in `custominstall/bin/linux`, or in `CUSTOM_INSTALL_SAVE3DS_PATH`. Tk is required for the window (`python3-tk` on Debian/Ubuntu).
+
+### Export and import
+
+Copy `extras/gm9/ci-manage.gm9` to `sdmc:/gm9/scripts/`. Boot GodMode9 with START, then open Scripts and run `ci-manage`.
+
+1. Export. The snapshot is written to `sdmc:/gm9/out/ci-manage/<date>-<time>/`.
+2. Edit that folder on a computer. Do not open HOME Menu between export and import.
+3. Import with the same script. It writes the SD databases, extdata, `Launcher.dat`, `SEEDDB`, and the queued tickets. It does not write `boot9`, `otp`, or `movable.sed`.
+
+### Manager window
+
+```
+python -m custominstall.manage_gui
+```
+
+The window only asks for two paths:
+
+| Field | Meaning |
+| --- | --- |
+| SD root | Root of the SD card, such as `E:\` |
+| Snapshot | The `ci-manage` export directory |
+
+`boot9.bin` and `movable.sed` are read from `<snapshot>/nand/`. Names come from the submodules, then from `custominstall/data/`. Icons prefer `icon.jpg` from the ghost-land checkout. The capacity bar is the free space of the SD volume.
+
+`CUSTOMINSTALL_SD` and `CUSTOMINSTALL_SNAPSHOT` fill those two fields. `CUSTOMINSTALL_ARCHIVE_PASSWORD` is the password used when an added file is a zip, 7z, or rar. The archive type is taken from the file header, not the extension. patool and rarfile are tried first. zip and 7z then fall back to in-process readers. A rar still needs UnRAR, unar, or bsdtar.
+
+The grid is the HOME Menu: column first, row count from the console, horizontal scroll. The list shows every title. NAND titles are marked `(nand)` and cannot be deleted. Selecting an update or DLC highlights the installed base with the same low 32 bits (`00040000`, `00040002`, or `00040010`). Home Menu theme DLC (`0004008c00008200`–`0004008c00008206` on a Japanese console, and the same range for the other regions) has no base icon.
+
+Save writes the snapshot only when something changed. It first copies the replaced files to `backup-<timestamp>/`. If that copy fails, the window asks whether to continue. Closing the window with unsaved edits asks before discarding them.
+
+Add CIA writes the title to the SD card immediately and queues a stub ticket in the snapshot. Dump CIA writes a title-key-decrypted CIA for an SD application, update, or DLC. It does not restore the original title-key encryption. DSiWare and NAND-only titles have no SD contents, so they cannot be dumped. Delete can remove an SD application, with optional update, DLC, save, and extdata, or an update or DLC by itself. Import the snapshot before opening HOME Menu after any of these.
+
+### Command line
+
+```
+python -m custominstall titles list --snapshot <export>
+python -m custominstall titles layout --snapshot <export>
+python -m custominstall titles move --snapshot <export> --id <title-id> --slot <n> --folder <id>
+python -m custominstall titles sort --snapshot <export> --by name
+python -m custominstall titles folder --snapshot <export> create --name <name>
+python -m custominstall titles add --snapshot <export> --sd <sd> <file.cia>
+python -m custominstall titles remove --snapshot <export> --sd <sd> --id <title-id>
+```
+
+`move`, `sort`, `folder`, `add`, and `remove` save the snapshot immediately. `add` and `remove` also change the SD card.
+
 ## Summary
 
 ### Windows standalone
